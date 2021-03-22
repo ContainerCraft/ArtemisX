@@ -11,5 +11,5 @@ systemctl disable dnsmasq
 pkill -KILL dnsmasq
 systemctl restart systemd-resolved.service
 sleep 5
-cat /etc/resolve.conf
+cat /etc/resolv.conf
 netstat -tulpn | grep ':53 '
