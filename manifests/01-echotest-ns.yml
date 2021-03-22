@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: echotest
+  labels:
+    app: echotest
+    app.kubernetes.io/name: echotest
+    app.kubernetes.io/part-of: echotest

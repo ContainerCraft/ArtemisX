@@ -1,0 +1,15 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: bar-service
+  namespace: echotest
+  labels:
+    app.kubernetes.io/name: echotest
+    app.kubernetes.io/part-of: echotest
+spec:
+  selector:
+    app: bar
+  ports:
+  # Default port used by the image
+  - port: 5678

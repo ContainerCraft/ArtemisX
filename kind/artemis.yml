@@ -1,0 +1,59 @@
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+name: artemis
+
+runtimeConfig:
+  "api/alpha": "false"
+
+networking:
+  podSubnet: "10.244.0.0/16"
+  serviceSubnet: "10.96.0.0/12"
+  apiServerAddress: "127.0.0.1"
+  apiServerPort: 6443
+
+nodes:
+- role: control-plane
+  extraPortMappings:
+  - hostPort: 80
+    containerPort: 80
+    listenAddress: "127.0.0.1"
+    protocol: tcp
+  - hostPort: 443
+    containerPort: 443
+    listenAddress: "127.0.0.1"
+    protocol: tcp
+  - hostPort: 8080
+    containerPort: 8080
+    listenAddress: "127.0.0.1"
+    protocol: tcp
+  - hostPort: 5000
+    containerPort: 5000
+    listenAddress: "127.0.0.1"
+    protocol: tcp
+  - hostPort: 2222
+    containerPort: 2222
+    listenAddress: "127.0.0.1"
+    protocol: tcp
+  - hostPort: 9097
+    containerPort: 9097
+    listenAddress: "127.0.0.1"
+    protocol: tcp
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "ingress-ready=true"
+---
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+kubernetesVersion: v1.16.0
+apiServer:
+  extraArgs:
+    audit-log-path: /var/log/kind-artemis.log
+    advertise-address: "127.0.0.1:6443"
+    enable-admission-plugins: AlwaysPullImages,DefaultStorageClass
+    anonymous-auth: "true"
+
+###########################################################################################
+# https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/control-plane-flags

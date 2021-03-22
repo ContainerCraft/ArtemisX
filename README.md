@@ -1,2 +1,1 @@
-# artemis
-minimum viable gitops
+kargo
