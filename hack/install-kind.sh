@@ -8,6 +8,11 @@ chmod +x ./bin/*
 export PATH=$PATH:$(pwd)/bin
 kind version
 kubectl version --client --short
-kind create cluster -v=9 --config $(pwd)/kind/artemis.yml
+sudo $(pwd)/bin/kind create cluster -v=9 --config $(pwd)/kind/artemis.yml
+
+mkdir -p $(pwd)/kube
+sudo cp /root/.kube/config $(pwd)/kube/config
+sudo chown $USER:$USER -R $(pwd)
+export KUBECONFIG=$(pwd)/kube/config
 kubectl cluster-info --context kind-artemis
 # kind delete clusters kargo
