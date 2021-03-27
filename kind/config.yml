@@ -38,6 +38,9 @@ nodes:
     containerPort: 9097
     listenAddress: "127.0.0.1"
     protocol: tcp
+  extraMounts:
+    - hostPath: /tmp/artemis
+      containerPath: /tmp/artemis
   kubeadmConfigPatches:
   - |
     kind: InitConfiguration
