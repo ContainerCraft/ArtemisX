@@ -1,0 +1,10 @@
+apiVersion: networkaddonsoperator.network.kubevirt.io/v1
+kind: NetworkAddonsConfig
+metadata:
+  name: cluster
+spec:
+  selfSignConfiguration:
+    caRotateInterval: 168h
+    caOverlapInterval: 24h
+    certRotateInterval: 24h
+    certOverlapInterval: 8h

@@ -1,8 +1,10 @@
+#!/bin/bash -x
 #######################################################################################
 # Install kubectl
 dir_bin="../bin"
-bitKubectl="${dir_bin}/kubectl"
+binKubectl="${dir_bin}/kubectl"
 verKubectl="$(curl -L -s https://dl.k8s.io/release/stable.txt)"
+mkdir -p ${dir_bin}
 curl --output ${binKubectl} -L "https://dl.k8s.io/release/${verKubectl}/bin/linux/amd64/kubectl"
 chmod +x ${binKubectl}
 

@@ -1,8 +1,14 @@
 #!/bin/bash
 
-rcVersion="2.0.0-rc1"
+rcVersion="2.0.0-rc2"
 argoVersion="${rcVersion}"
 #argoVersion=$(curl --silent "https://api.github.com/repos/argoproj/argo-cd/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+hostpathVersion=$(curl --silent "https://api.github.com/repos/kubevirt/hostpath-provisioner/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+
+hostPathDeployUrl="https://github.com/kubevirt/hostpath-provisioner/releases/download/${hostpathVersion}/kubevirt-hostpath-provisioner.yaml"
+hostPathSecUrl="https://github.com/kubevirt/hostpath-provisioner/releases/download/${hostpathVersion}/kubevirt-hostpath-security-constraints.yaml"
+
+localPathDeployUrl="https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml"
 
 argoInstallUrl="https://raw.githubusercontent.com/argoproj/argo-cd/v${argoVersion}/manifests/install.yaml"
 
@@ -19,6 +25,25 @@ cat manifests/artemis-namespace.yml >> artemis.yml
 # Nginx Ingress
 echo "---" >> artemis.yml
 curl -L ${nginxIngressDeployUrl} >> artemis.yml
+
+################################################################################
+# Host Path Provisioner
+#echo "---" >> artemis.yml
+#curl -L ${hostPathDeployUrl} >> artemis.yml
+
+#echo "---" >> artemis.yml
+#curl -L ${hostPathSecUrl} >> artemis.yml
+
+#echo "---" >> artemis.yml
+#cat manifests/hostpath.yml >> artemis.yml
+
+################################################################################
+# LocalPath Provisioner Default Storage Class
+echo "---" >> artemis.yml
+curl -L ${localPathDeployUrl} >> artemis.yml
+
+echo "---" >> artemis.yml
+cat patch/localpath.yml >> artemis.yml
 
 ################################################################################
 # ArgoCD
