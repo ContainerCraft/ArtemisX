@@ -1,0 +1,58 @@
+---
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachine
+metadata:
+  name: qubo
+spec:
+  running: true
+  template:
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: artemis-aio
+      domain:
+        devices:
+          disks:
+            - name: containerdisk
+              disk:
+                bus: virtio
+            - name: cloudinitdisk
+              disk:
+                bus: virtio
+          interfaces:
+          - name: default
+            masquerade: {}
+          - name: eth1
+            bridge: {}
+        machine:
+          type: ""
+        resources:
+          requests:
+            memory: 4096M
+      networks:
+      - name: default
+        pod: {}
+      - name: eth1
+        multus:
+          networkName: br0
+      terminationGracePeriodSeconds: 0
+      volumes:
+        - name: containerdisk
+          containerDisk:
+            image: kubevirt/fedora-cloud-container-disk-demo
+        - name: cloudinitdisk
+          cloudInitNoCloud:
+            networkData: |
+              version: 2
+              ethernets:
+                eth0:
+                  addresses: [ 10.0.0.18/24 ]
+            userData: |-
+              #!/bin/bash
+              echo "fedora" | passwd fedora --stdin
+              mkdir ${HOME}/.ssh
+              touch ${HOME}/.ssh/authorized_keys
+              chmod 600 ${HOME}/.ssh/authorized_keys
+              sudo dnf -y install qemu-guest-agent
+              sudo systemctl enable qemu-guest-agent
+              sudo systemctl start qemu-guest-agent
+              curl -L https://github.com/usrbinkat.keys | tee -a ${HOME}/.ssh/authorized_keys

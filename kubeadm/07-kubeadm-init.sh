@@ -1,3 +1,5 @@
+#!/bin/bash -x
+
 runPwd=$(pwd)
 mkdir -p /etc/artemis
 cd /etc/artemis
@@ -7,7 +9,7 @@ kubeadm init \
     --node-name artemis-aio \
     --apiserver-bind-port 6443 \
     --log-file='/var/log/artemis.log' \
-    --apiserver-advertise-address="10.0.0.85" \
+    --apiserver-advertise-address="10.0.0.253" \
     --apiserver-cert-extra-sans="artemis.codectl.io" \
     --apiserver-cert-extra-sans="api.artemis.codectl.io" \
     $@

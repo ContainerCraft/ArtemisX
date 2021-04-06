@@ -1,0 +1,52 @@
+---
+apiVersion: nmstate.io/v1beta1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: bond
+spec:
+  desiredState:
+    interfaces:
+    - name: bond0
+      type: bond
+      state: up
+      ipv6:
+        dhcp: false
+        enabled: false
+      ipv4:
+        dhcp: false
+        enabled: false
+      link-aggregation:
+        mode: balance-rr
+        options:
+          miimon: '140'
+        slaves:
+        - eth0
+        - eth1
+        - eth2
+        - eth3
+        - ens2f0
+        - ens2f1
+---
+apiVersion: nmstate.io/v1beta1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: linux-bridge
+spec:
+  desiredState:
+    interfaces:
+    - name: br0
+      description: Linux bridge with bond0 as a port
+      type: linux-bridge
+      state: up
+      ipv6:
+        dhcp: false
+        enabled: false
+      ipv4:
+        dhcp: false
+        enabled: false
+      bridge:
+        options:
+          stp:
+            enabled: false
+        port:
+        - name: bond0

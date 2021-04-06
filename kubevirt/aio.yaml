@@ -24,6 +24,8 @@ metadata:
   labels:
     guest: aio-n01
     app.kubernetes.io/name: aio
+  annotations:
+    k8s.v1.cni.cncf.io/networks: macvlan-conf
 spec:
   dataVolumeTemplates:
   - metadata:
@@ -35,7 +37,7 @@ spec:
         resources:
           requests:
             storage: 32G
-        storageClassName: local-path
+        storageClassName: hostpath-provisioner
       source:
         registry:
           url: "docker://quay.io/codesparta/rhel-kvm"

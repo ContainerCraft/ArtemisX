@@ -1,21 +1,23 @@
-# https://www.nmstate.io/kubernetes-nmstate/examples.html
 apiVersion: nmstate.io/v1beta1
 kind: NodeNetworkConfigurationPolicy
 metadata:
+  generation: 2
   name: qubo-br0
 spec:
+  nodeSelector:
+    node-role.kubernetes.io/worker: ""
   desiredState:
     interfaces:
-    - name: qubo-br0
-      description: Linux bridge with ens2np1 as a port
+    - description: Linux bridge with eno2np1 as a port
+      name: qubo-br0
       type: linux-bridge
       state: up
       ipv4:
-        dhcp: true
+        dhcp: false
         enabled: true
       bridge:
         options:
           stp:
             enabled: false
         port:
-        - name: ens2np1
+          - name: eno2np1
