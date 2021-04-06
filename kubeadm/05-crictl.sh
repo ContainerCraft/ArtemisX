@@ -6,3 +6,5 @@ CRI_RELEASE="$(\
 CRI_RELEASE_URL="https://github.com/kubernetes-sigs/cri-tools/releases/download/v${CRI_RELEASE}/crictl-v${CRI_RELEASE}-linux-amd64.tar.gz"
 sudo mkdir -p /opt/cni/bin
 curl -L "${CRI_RELEASE_URL}" | sudo tar -C /opt/cni/bin -xz
+curl -L "${CRI_RELEASE_URL}" | sudo tar -C /bin -xz
+chmod +x /bin/crictl /opt/cni/bin/crictl

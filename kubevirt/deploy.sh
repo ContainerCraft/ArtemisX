@@ -59,4 +59,4 @@ kubectl apply -n kubevirt -f kubevirt
 sleep 3
 curl -L ${kubevirtCr} > kubevirt/cr.yaml
 kubectl apply -n kubevirt -f kubevirt
-kubectl -n kubevirt wait kv kubevirt --for condition=Available
+kubectl -n kubevirt wait kv kubevirt --for condition=Available --timeout="600s"

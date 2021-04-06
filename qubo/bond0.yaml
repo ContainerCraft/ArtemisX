@@ -20,12 +20,8 @@ spec:
         options:
           miimon: '140'
         slaves:
-        - eth0
-        - eth1
-        - eth2
-        - eth3
-        - ens2f0
-        - ens2f1
+        - enp28s0f0
+        - enp28s0f1
 ---
 apiVersion: nmstate.io/v1beta1
 kind: NodeNetworkConfigurationPolicy
