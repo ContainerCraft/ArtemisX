@@ -34,7 +34,7 @@ spec:
       volumes:
         - name: containerdisk
           containerDisk:
-            image: quay.io/containercraft/ubuntu:20.10
+            image: quay.io/containercraft/ubuntu:latest
         - name: cloudinitdisk
           cloudInitNoCloud:
             userData: |-
@@ -48,7 +48,8 @@ spec:
               chown ubuntu:ubuntu /home/ubuntu/.ssh/authorized_keys
               chmod 600 /home/ubuntu/.ssh/authorized_keys
               sudo apt-get update -y
-              sudo apt-get -y install qemu-guest-agent openssh-server lnav tmux vim
+              sudo apt-get -y install cloud-initramfs-growroot qemu-guest-agent openssh-server runc podman lnav tmux vim
               sudo systemctl enable --now qemu-guest-agent
               sudo systemctl enable --now sshd
+              sudo growpart /dev/vda 1
               sudo apt-get upgrade -y
