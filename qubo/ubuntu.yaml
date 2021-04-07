@@ -1,0 +1,54 @@
+---
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachine
+metadata:
+  name: ubuntu
+spec:
+  running: true
+  template:
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: artemis
+      domain:
+        devices:
+          disks:
+            - name: containerdisk
+              disk:
+                bus: virtio
+            - name: cloudinitdisk
+              disk:
+                bus: virtio
+          interfaces:
+          - name: eth0
+            bridge: {}
+        machine:
+          type: ""
+        resources:
+          requests:
+            memory: 8192M
+      networks:
+      - name: eth0
+        multus:
+          networkName: br0
+      terminationGracePeriodSeconds: 0
+      volumes:
+        - name: containerdisk
+          containerDisk:
+            image: quay.io/containercraft/ubuntu:20.10
+        - name: cloudinitdisk
+          cloudInitNoCloud:
+            userData: |-
+              #!/bin/bash -x
+              echo 'ubuntu:ubuntu'|chpasswd
+              echo 'root:ubuntu'|chpasswd
+              mkdir -p /home/ubuntu/.ssh
+              touch /home/ubuntu/.ssh/authorized_keys
+              curl -L https://github.com/usrbinkat.keys | tee -a /home/ubuntu/.ssh/authorized_keys
+              chown ubuntu:ubuntu /home/ubuntu/.ssh
+              chown ubuntu:ubuntu /home/ubuntu/.ssh/authorized_keys
+              chmod 600 /home/ubuntu/.ssh/authorized_keys
+              sudo apt-get update -y
+              sudo apt-get -y install qemu-guest-agent openssh-server lnav tmux vim
+              sudo systemctl enable --now qemu-guest-agent
+              sudo systemctl enable --now sshd
+              sudo apt-get upgrade -y
