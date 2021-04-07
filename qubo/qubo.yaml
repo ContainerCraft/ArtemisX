@@ -19,9 +19,9 @@ spec:
               disk:
                 bus: virtio
           interfaces:
-          - name: default
-            masquerade: {}
-          - name: eth1
+#         - name: default
+#           masquerade: {}
+          - name: eth0
             bridge: {}
         machine:
           type: ""
@@ -29,9 +29,9 @@ spec:
           requests:
             memory: 4096M
       networks:
-      - name: default
-        pod: {}
-      - name: eth1
+#     - name: default
+#       pod: {}
+      - name: eth0
         multus:
           networkName: br0
       terminationGracePeriodSeconds: 0
@@ -49,10 +49,11 @@ spec:
             userData: |-
               #!/bin/bash
               echo "fedora" | passwd fedora --stdin
-              mkdir ${HOME}/.ssh
-              touch ${HOME}/.ssh/authorized_keys
-              chmod 600 ${HOME}/.ssh/authorized_keys
-              curl -L https://github.com/usrbinkat.keys | tee -a ${HOME}/.ssh/authorized_keys
+              mkdir /home/fedora/.ssh
+              touch /home/fedora/.ssh/authorized_keys
+              chmod 600 /home/fedora/.ssh/authorized_keys
+              chown fedora:fedora -R /home/fedora/.ssh
+              curl -L https://github.com/usrbinkat.keys | tee -a /home/fedora/.ssh/authorized_keys
               sudo dnf -y install openssh-server qemu-guest-agent
               sudo systemctl enable --now qemu-guest-agent
               sudo systemctl enable --now sshd
