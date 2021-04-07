@@ -1,3 +1,8 @@
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+cgroupDriver: systemd
+---
 apiVersion: kubeadm.k8s.io/v1beta2
 bootstrapTokens:
 - groups:
@@ -9,20 +14,20 @@ bootstrapTokens:
   - authentication
 kind: InitConfiguration
 localAPIEndpoint:
-  advertiseAddress: 1.2.3.4
+  advertiseAddress: 10.0.0.253
   bindPort: 6443
 nodeRegistration:
-  criSocket: /var/run/dockershim.sock
-  name: ibane
-  taints:
-  - effect: NoSchedule
-    key: node-role.kubernetes.io/master
+  criSocket: /var/run/containerd/containerd.sock
+  name: mordor
+# taints:
+# - effect: NoSchedule
+#   key: node-role.kubernetes.io/master
 ---
-apiServer:
-  timeoutForControlPlane: 4m0s
 apiVersion: kubeadm.k8s.io/v1beta2
+apiServer:
+  timeoutForControlPlane: 6m0s
 certificatesDir: /etc/kubernetes/pki
-clusterName: kubernetes
+clusterName: artemis
 controllerManager: {}
 dns:
   type: CoreDNS
@@ -33,6 +38,6 @@ imageRepository: k8s.gcr.io
 kind: ClusterConfiguration
 kubernetesVersion: v1.20.0
 networking:
-  dnsDomain: cluster.local
-  serviceSubnet: 10.96.0.0/12
+  dnsDomain: codectl.local
+  serviceSubnet: 192.96.0.0/12
 scheduler: {}

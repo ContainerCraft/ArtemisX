@@ -8,7 +8,7 @@ spec:
   template:
     spec:
       nodeSelector:
-        kubernetes.io/hostname: artemis-aio
+        kubernetes.io/hostname: artemis
       domain:
         devices:
           disks:
@@ -41,18 +41,19 @@ spec:
             image: kubevirt/fedora-cloud-container-disk-demo
         - name: cloudinitdisk
           cloudInitNoCloud:
-            networkData: |
-              version: 2
-              ethernets:
-                eth0:
-                  addresses: [ 10.0.0.18/24 ]
+           #networkData: |
+           #  version: 2
+           #  ethernets:
+           #    eth1:
+           #      addresses: [ 10.0.0.18/24 ]
             userData: |-
               #!/bin/bash
               echo "fedora" | passwd fedora --stdin
               mkdir ${HOME}/.ssh
               touch ${HOME}/.ssh/authorized_keys
               chmod 600 ${HOME}/.ssh/authorized_keys
-              sudo dnf -y install qemu-guest-agent
-              sudo systemctl enable qemu-guest-agent
-              sudo systemctl start qemu-guest-agent
               curl -L https://github.com/usrbinkat.keys | tee -a ${HOME}/.ssh/authorized_keys
+              sudo dnf -y install openssh-server qemu-guest-agent
+              sudo systemctl enable --now qemu-guest-agent
+              sudo systemctl enable --now sshd
+              sudo dnf groupinstall "Container Management"

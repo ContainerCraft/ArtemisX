@@ -1,21 +1,19 @@
 #!/bin/bash -x
 
+kubeadm reset
 runPwd=$(pwd)
 mkdir -p /etc/artemis
 cd /etc/artemis
 kubeadm init \
-    --token-ttl 0 \
-    --add-dir-header \
     --node-name artemis \
-    --log-file-max-size=64 \
-    --apiserver-bind-port 6443 \
-    --service-cidr 192.96.0.0/12 \
-    --log-file='/var/log/artemis.log' \
-    --cri-socket /var/run/crio/crio.sock \
-    --apiserver-advertise-address="10.0.0.253" \
-    --apiserver-cert-extra-sans="artemis.codectl.io" \
-    --apiserver-cert-extra-sans="api.artemis.codectl.io" \
+    --config /root/artemis/kubeadm/config/kubeadm.yaml \
+    --cri-socket /var/run/containerd/containerd.sock \
     $@
+
+#   --apiserver-cert-extra-sans="artemis.codectl.io" \
+#   --apiserver-cert-extra-sans="api.artemis.codectl.io" \
+#   --log-file-max-size=64 \
+#   --log-file='/var/log/artemis.log' \
 
 cd ${runPwd}
 
@@ -25,6 +23,8 @@ export KUBECONFIG=/etc/kubernetes/admin.conf
 kubectl taint nodes --all node-role.kubernetes.io/master-
 kubectl label nodes artemis node-role.kubernetes.io/worker=""
 
+#   --cgroup-driver systemd \
+#--cri-socket /var/run/crio/crio.sock \
 #   --config kubeadm.conf \
 #  mkdir -p $HOME/.kube
 #  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
