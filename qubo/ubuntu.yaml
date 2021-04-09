@@ -10,6 +10,10 @@ spec:
       nodeSelector:
         kubernetes.io/hostname: artemis
       domain:
+        cpu:
+          cores: 4
+          sockets: 1
+          threads: 1
         devices:
           disks:
             - name: containerdisk
@@ -25,7 +29,7 @@ spec:
           type: ""
         resources:
           requests:
-            memory: 8192M
+            memory: 16Gi
       networks:
       - name: eth0
         multus:

@@ -1,4 +1,6 @@
 ---
+# https://kubevirt.io/2020/Multiple-Network-Attachments-with-bridge-CNI.html
+# https://examples.openshift.pub/kubevirt/networking/
 apiVersion: nmstate.io/v1beta1
 kind: NodeNetworkConfigurationPolicy
 metadata:

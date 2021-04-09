@@ -1,4 +1,5 @@
 ---
+# https://github.com/kubevirt/kubevirt/blob/master/docs/cloud-init.md
 apiVersion: kubevirt.io/v1alpha3
 kind: VirtualMachine
 metadata:
