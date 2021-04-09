@@ -1,9 +1,5 @@
-apiVersion: "k8s.cni.cncf.io/v1"
-kind: NetworkAttachmentDefinition
-metadata:
-  name: lan
-spec:
-  config: |
+#!/bin/bash -x
+cat <<EOF | jq .
     {
       "cniVersion": "0.3.1",
       "name": "home-network",
@@ -31,3 +27,4 @@ spec:
         ]
       }
     }
+EOF
