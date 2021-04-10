@@ -2,6 +2,10 @@
 apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration
 cgroupDriver: systemd
+featureGates:
+  CPUManager: true
+  HugePages: true
+cpuManagerPolicy: static
 ---
 apiVersion: kubeadm.k8s.io/v1beta2
 bootstrapTokens:
