@@ -64,7 +64,9 @@ spec:
               chown fedora:fedora -R /home/fedora/.ssh
               curl -L https://github.com/usrbinkat.keys | tee -a /home/fedora/.ssh/authorized_keys
               sudo grubby --update-kernel=ALL --args 'cgroup_memory=1 cgroup_enable=cpuset cgroup_enable=memory systemd.unified_cgroup_hierarchy=0 intel_iommu=on iommu=pt rd.driver.pre=vfio-pci pci=realloc'
-              sudo dnf -y install openssh-server qemu-guest-agent @virtualization lnav tmux vi vim
+              sudo dnf update -y
+              sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+              sudo dnf -y install neofetch openssh-server qemu-guest-agent @virtualization lnav tmux vi vim git vi vim socat ethtool ebtables containerd openssh-server conntrack-tools htop tmux
               sudo echo 'unix_sock_group = "libvirt"' > /etc/libvirt/libvirtd.conf
               sudo echo 'unix_sock_rw_perms = "0770"' > /etc/libvirt/libvirtd.conf
               sudo systemctl enable --now qemu-guest-agent
