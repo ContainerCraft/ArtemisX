@@ -1,15 +1,69 @@
 #!/bin/bash -x
+cat <<EOF > /tmp/kubeadm.yaml
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+cgroupDriver: systemd
+#featureGates:
+#  CPUManager: true
+#cpuManagerPolicy: static
+maxPods: 256
+staticPodPath: /etc/kubernetes/manifests
+serializeImagePulls: false
+---
+apiVersion: kubeadm.k8s.io/v1beta2
+bootstrapTokens:
+- groups:
+  - system:bootstrappers:kubeadm:default-node-token
+  token: abcdef.0123456789abcdef
+  ttl: 24h0m0s
+  usages:
+  - signing
+  - authentication
+kind: InitConfiguration
+localAPIEndpoint:
+  advertiseAddress: $(ip -4 -o addr show eth0 | awk -F'[/ ]' '{print $7}')
+  bindPort: 6443
+nodeRegistration:
+  criSocket: /var/run/containerd/containerd.sock
+  name: artemis
+# taints:
+# - effect: NoSchedule
+#   key: node-role.kubernetes.io/master
+---
+apiVersion: kubeadm.k8s.io/v1beta2
+apiServer:
+  timeoutForControlPlane: 6m0s
+certificatesDir: /etc/kubernetes/pki
+clusterName: artemis
+controllerManager: {}
+dns:
+  type: CoreDNS
+etcd:
+  local:
+    dataDir: /var/lib/etcd
+imageRepository: k8s.gcr.io
+kind: ClusterConfiguration
+kubernetesVersion: v1.20.0
+networking:
+  dnsDomain: codectl.local
+  serviceSubnet: 192.96.0.0/12
+scheduler: {}
+EOF
 
 kubeadm reset
 runPwd=$(pwd)
 mkdir -p /etc/artemis
 cd /etc/artemis
+systemctl stop kubelet
+sleep 2
 kubeadm init \
     --node-name artemis \
-    --config /root/artemis/kubeadm/config/kubeadm.yaml \
+    --config /tmp/kubeadm.yaml \
     --cri-socket /var/run/containerd/containerd.sock \
     $@
 
+systemctl start kubelet
 #   --apiserver-cert-extra-sans="artemis.codectl.io" \
 #   --apiserver-cert-extra-sans="api.artemis.codectl.io" \
 #   --log-file-max-size=64 \

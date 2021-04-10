@@ -4,7 +4,7 @@ cat <<EOF | tee /etc/systemd/resolved.conf
 DNS=8.8.8.8
 DNSStubListener=no
 EOF
-mkdir /run/systemd/resolve
+mkdir -p /run/systemd/resolve
 ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
 systemctl stop dnsmasq
 systemctl disable dnsmasq
