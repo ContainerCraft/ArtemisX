@@ -6,6 +6,10 @@ featureGates:
   CPUManager: true
   HugePages: true
 cpuManagerPolicy: static
+maxPods: 256
+rotateCertificates: true
+staticPodPath: /etc/kubernetes/manifests
+serializeImagePulls: false
 ---
 apiVersion: kubeadm.k8s.io/v1beta2
 bootstrapTokens:
