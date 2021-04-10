@@ -4,7 +4,7 @@ kind: KubeletConfiguration
 cgroupDriver: systemd
 #featureGates:
 #  CPUManager: true
-cpuManagerPolicy: static
+#cpuManagerPolicy: static
 maxPods: 256
 staticPodPath: /etc/kubernetes/manifests
 serializeImagePulls: false
