@@ -7,9 +7,17 @@ spec:
   running: true
   template:
     spec:
-      nodeSelector:
-        kubernetes.io/hostname: artemis
       domain:
+        machine:
+          type: "pc-q35-rhel8.3.0"
+        cpu:
+          cores: 8
+          threads: 2
+          sockets: 1
+          dedicatedCpuPlacement: true
+        resources:
+          requests:
+            memory: 4096M
         devices:
           disks:
             - name: containerdisk
@@ -21,15 +29,15 @@ spec:
           interfaces:
           - name: eth0
             bridge: {}
+            model: virtio
           - name: eth1
             bridge: {}
+            model: virtio
           - name: eth2
             bridge: {}
-        machine:
-          type: ""
-        resources:
-          requests:
-            memory: 4096M
+            model: virtio
+          networkInterfaceMultiqueue: true
+      terminationGracePeriodSeconds: 0
       networks:
       - name: eth0
         multus:
