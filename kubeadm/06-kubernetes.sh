@@ -1,6 +1,5 @@
 #!/bin/bash
 
-kubeadm reset
 pathRun="$(pwd)"
 pathDir="/usr/local/bin"
 
