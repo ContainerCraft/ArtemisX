@@ -77,6 +77,12 @@ export KUBECONFIG=/etc/kubernetes/admin.conf
 kubectl taint nodes --all node-role.kubernetes.io/master-
 kubectl label nodes artemis node-role.kubernetes.io/worker=""
 
+export KUBECONFIG=/root/.kube/config
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+kubectl get nodes
+
 #   --cgroup-driver systemd \
 #--cri-socket /var/run/crio/crio.sock \
 #   --config kubeadm.conf \
