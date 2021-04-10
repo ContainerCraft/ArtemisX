@@ -1,0 +1,64 @@
+#!/bin/bash -x
+
+sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
+setenforce 0
+
+systemctl stop firewalld
+systemctl disable firewalld
+systemctl status firewalld
+
+# grubby --update-kernel ALL --args "selinux=0 cgroup_memory=1 cgroup_enable=cpuset cgroup_enable=memory systemd.unified_cgroup_hierarchy=0 intel_iommu=on iommu=pt rd.driver.pre=vfio-pci pci=realloc" && reboot
+
+dnfPkgList="\
+git \
+vi \
+vim \
+socat \
+ethtool \
+ebtables \
+containerd \
+openssh-server \
+conntrack-tools \
+"
+
+# subscription-manager register --username='usrbinkat' --password='***********' --auto-attach --force
+sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+
+dnf update -y
+dnf upgrade -y
+dnf install -y ${dnfPkgList}
+
+git clone https://github.com/containercraft/artemis.git ~/artemis
+cd ~/artemis/kubeadm/
+
+./01-fix-resolved.sh 
+./02-netfilter.sh 
+./03-kubectl.sh 
+
+cp ../bin/kubectl /bin/
+kubectl version --client
+
+./04-cni-plugins.sh 
+./05-crictl.sh 
+
+cp /etc/containerd/config.toml /etc/containerd/config.toml.bak
+cp -f etc/containerd/config.toml /etc/containerd/config.toml
+
+systemctl enable --now containerd
+systemctl restart containerd
+systemctl status containerd
+
+./06-kubernetes.sh
+systemctl start kubelet
+./07-kubeadm-init.sh
+
+export KUBECONFIG=/etc/kubernetes/admin.conf 
+kubectl get po
+
+kubectl label node artemis --overwrite node-role.kubernetes.io/master-
+kubectl label node artemis --overwrite node-role.kubernetes.io/worker=""
+kubectl label node artemis --overwrite ingress-ready=true
+
+./deploy.sh ; sleep 5 ; ./deploy.sh ; sleep 5 ; ./deploy.sh ; sleep 5 ; ./deploy.sh ; sleep 5 ./deploy.sh 
+kubectl patch storageclass hostpath-provisioner -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+watch -c "ip a s eno1np0; echo; ip a s eno2np1; echo; ip a s ens2f0; echo; ip a s ens2f1; echo; ip a s eth2; echo; ip a s eth3; echo; ip a s bond0; echo; ip a s br0"
