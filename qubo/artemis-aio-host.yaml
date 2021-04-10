@@ -19,7 +19,7 @@ spec:
         # isolateEmulatorThread: true
         resources:
           requests:
-            memory: 4096M
+            memory: 16384M
         devices:
           disks:
             - name: containerdisk
@@ -81,7 +81,8 @@ spec:
               sudo systemctl disable firewalld
               sudo systemctl enable --now qemu-guest-agent
               sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
-              sudo systemctl enable --now docker.service
+              sudo systemctl enable docker
+              sudo systemctl enable containerd
               sudo systemctl enable --now libvirtd
               sudo systemctl restart libvirtd
               sudo systemctl enable --now sshd
