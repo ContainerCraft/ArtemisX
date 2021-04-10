@@ -34,12 +34,10 @@ kubectl version --client
 cp /etc/containerd/config.toml /etc/containerd/config.toml.bak
 cp -f etc/containerd/config.toml /etc/containerd/config.toml
 
-systemctl enable --now containerd
 systemctl restart containerd
 systemctl status containerd
 
 ./06-kubernetes.sh
-systemctl start kubelet
 ./07-kubeadm-init.sh
 
 export KUBECONFIG=/etc/kubernetes/admin.conf 

@@ -6,7 +6,7 @@ pathDir="/usr/local/bin"
 K8S_RELEASE_STABLE="$(curl -sSL https://dl.k8s.io/release/stable.txt)"
 K8S_RELEASE_GIT="$(\
         curl -s 'https://github.com/kubernetes/release/releases' \
-	| awk -F'[v\&\"]' '/tag_name/{print $3; exit}' \
+	| awk -F'[v\&\"]' '/tag_name/{print $3; exit}' 2>/dev/null \
     )"
 
 K8S_DOWNLOAD_URL="https://storage.googleapis.com/kubernetes-release/release/${K8S_RELEASE_STABLE}/bin/linux/amd64/{kubeadm,kubelet,kubectl}"
