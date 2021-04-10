@@ -3,13 +3,14 @@ cat <<EOF > /tmp/kubeadm.yaml
 ---
 apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration
+maxPods: 256
 cgroupDriver: systemd
+staticPodPath: /etc/kubernetes/manifests
+serializeImagePulls: false
+
 #featureGates:
 #  CPUManager: true
 #cpuManagerPolicy: static
-maxPods: 256
-staticPodPath: /etc/kubernetes/manifests
-serializeImagePulls: false
 ---
 apiVersion: kubeadm.k8s.io/v1beta2
 bootstrapTokens:
