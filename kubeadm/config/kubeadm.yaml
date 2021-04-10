@@ -20,11 +20,11 @@ bootstrapTokens:
   - authentication
 kind: InitConfiguration
 localAPIEndpoint:
-  advertiseAddress: 10.0.0.253
+  advertiseAddress: 10.0.0.177
   bindPort: 6443
 nodeRegistration:
   criSocket: /var/run/containerd/containerd.sock
-  name: mordor
+  name: artemis
 # taints:
 # - effect: NoSchedule
 #   key: node-role.kubernetes.io/master
