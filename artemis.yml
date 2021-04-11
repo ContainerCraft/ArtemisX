@@ -3394,7 +3394,7 @@ spec:
         - -n
         - /usr/local/bin/argocd
         - /shared/argocd-dex
-        image: quay.io/argoproj/argocd:v2.0.0-rc2
+        image: quay.io/argoproj/argocd:v2.0.0
         imagePullPolicy: Always
         name: copyutil
         volumeMounts:
@@ -3494,7 +3494,7 @@ spec:
         - argocd-repo-server
         - --redis
         - argocd-redis:6379
-        image: quay.io/argoproj/argocd:v2.0.0-rc2
+        image: quay.io/argoproj/argocd:v2.0.0
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
@@ -3590,7 +3590,7 @@ spec:
         - argocd-server
         - --staticassets
         - /shared/app
-        image: quay.io/argoproj/argocd:v2.0.0-rc2
+        image: quay.io/argoproj/argocd:v2.0.0
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
@@ -3683,7 +3683,7 @@ spec:
         - "20"
         - --operation-processors
         - "10"
-        image: quay.io/argoproj/argocd:v2.0.0-rc2
+        image: quay.io/argoproj/argocd:v2.0.0
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
@@ -3723,7 +3723,6 @@ spec:
           secretName: argocd-repo-server-tls
 ---
 ---
----
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -3747,7 +3746,7 @@ spec:
               name: http
   tls:
   - hosts:
-    - argocd.notkemo.labs
+    - argocd.artemis.labs
     secretName: argocd-secret # do not change, this is provided by Argo CD
 ---
 ---
@@ -3771,10 +3770,9 @@ spec:
             name: argocd-server
             port:
               name: https
-    
   tls:
   - hosts:
-    - grpc.argocd.notkemo.labs
+    - grpc.argocd.artemis.labs
     secretName: argocd-secret # do not change, this is provided by Argo CD
 ---
 # Copyright 2019 The Tekton Authors

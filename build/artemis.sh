@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rcVersion="2.0.0-rc2"
+rcVersion="2.0.0"
 argoVersion="${rcVersion}"
 #argoVersion=$(curl --silent "https://api.github.com/repos/argoproj/argo-cd/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
 hostpathVersion=$(curl --silent "https://api.github.com/repos/kubevirt/hostpath-provisioner/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
@@ -50,8 +50,8 @@ cat patch/localpath.yml >> artemis.yml
 echo "---" >> artemis.yml
 curl -L ${argoInstallUrl} >> artemis.yml
 
-echo "---" >> artemis.yml
-cat patch/argocd-server-patch.yml >> artemis.yml
+#echo "---" >> artemis.yml
+#cat patch/argocd-server-patch.yml >> artemis.yml
 
 echo "---" >> artemis.yml
 cat manifests/argo-ingress-https.yml >> artemis.yml
@@ -61,11 +61,11 @@ cat manifests/argo-ingress-grpc.yml >> artemis.yml
 
 ################################################################################
 # Tekton Pipelines
-echo "---" >> artemis.yml
-curl -L ${tektonPipelineDeployUrl} >> artemis.yml
+#echo "---" >> artemis.yml
+#curl -L ${tektonPipelineDeployUrl} >> artemis.yml
 
-echo "---" >> artemis.yml
-curl -L ${tektonTriggersDeployUrl} >> artemis.yml
+#echo "---" >> artemis.yml
+#curl -L ${tektonTriggersDeployUrl} >> artemis.yml
 
-echo "---" >> artemis.yml
-curl -L ${tektonDashboardDeployUrl} >> artemis.yml
+#echo "---" >> artemis.yml
+#curl -L ${tektonDashboardDeployUrl} >> artemis.yml

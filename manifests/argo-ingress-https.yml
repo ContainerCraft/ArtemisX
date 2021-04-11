@@ -22,5 +22,5 @@ spec:
               name: http
   tls:
   - hosts:
-    - argocd.notkemo.labs
+    - argocd.artemis.labs
     secretName: argocd-secret # do not change, this is provided by Argo CD

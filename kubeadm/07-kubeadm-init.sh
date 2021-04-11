@@ -56,15 +56,12 @@ kubeadm reset
 runPwd=$(pwd)
 mkdir -p /etc/artemis
 cd /etc/artemis
-systemctl stop kubelet
-sleep 2
 kubeadm init \
     --node-name artemis \
     --config /tmp/kubeadm.yaml \
     --cri-socket /var/run/containerd/containerd.sock \
     $@
 
-systemctl start kubelet
 #   --apiserver-cert-extra-sans="artemis.codectl.io" \
 #   --apiserver-cert-extra-sans="api.artemis.codectl.io" \
 #   --log-file-max-size=64 \
