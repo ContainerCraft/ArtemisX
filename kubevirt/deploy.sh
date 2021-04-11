@@ -42,7 +42,7 @@ kubectl apply -n hostpath-provisioner -f hostpath
 
 mkdir -p aux
 curl -L "https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/master/deploy/cert-manager.yaml" > aux/cert-manager.yaml
-curl -L "https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/master/deploy/cert-manager.yaml" > aux/cluster_roles.yaml
+curl -L "https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/master/deploy/cluster_role.yaml" > aux/cluster_roles.yaml
 kubectl apply -f aux 
 kubectl -n cert-manager wait deployment/cert-manager --for=condition=Available --timeout="300s"
 kubectl -n cert-manager wait deployment/cert-manager-webhook --for=condition=Available --timeout="300s"
