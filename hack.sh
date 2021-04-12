@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -ex
 clear && echo "
 ####################################
 # Artemis -- Minimum Viable GitOps #
@@ -13,17 +13,19 @@ NAMESPACES="\
   kubevirt-hostpath-provisioner \
 "
 
+clear
+for namespace in ${NAMESPACES}; do
+  echo
+  echo ">> Deploying ${namespace}"
+  kubectl apply -n ${namespace} -f ${artemisPath}/${namespace}
+ #kubectl create --save-config -n ${namespace} -f ${artemisPath}/${namespace}
+done
+echo
 kubectl taint nodes --all node-role.kubernetes.io/master-
 kubectl label node artemis --overwrite node-role.kubernetes.io/master-
 kubectl label nodes --all node-role.kubernetes.io/worker
 kubectl label nodes --all ingress-ready=true
 
-for namespace in ${NAMESPACES}; do
-  echo
-  echo ">> Deploying ${namespace}"
-  kubectl create --save-config -n ${namespace} -f ${artemisPath}/${namespace}
-done
-echo
 
 
 # kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo

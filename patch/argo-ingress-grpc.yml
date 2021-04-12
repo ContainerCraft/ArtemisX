@@ -1,25 +1,24 @@
----
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: argocd-server-grpc-ingress
   namespace: argocd
+  name: argocd-server-grpc-ingress
   annotations:
-    kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: GRPC
 spec:
   rules:
-  - host: grpc.argocd.artemis.labs
+  - host: grpc.argocd.qotom.qubris.io
     http:
       paths:
-      - pathType: Prefix
-        path: /
-        backend:
+      - backend:
           service:
             name: argocd-server
             port:
               name: https
+        path: /
+        pathType: Prefix
   tls:
   - hosts:
-    - grpc.argocd.artemis.labs
-    secretName: argocd-secret # do not change, this is provided by Argo CD
+    - grpc.argocd.qotom.qubris.io
+    secretName: argocd-secret

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 pathRun="$(pwd)"
 pathDir="/usr/local/bin"
@@ -31,7 +31,11 @@ curl -sSL "${KUBERNETES_RELEASE_URL}/deb/kubelet/lib/systemd/system/kubelet.serv
     | sed "s:/usr/bin:${pathDir}:g" \
     | tee /etc/systemd/system/kubelet.service
 
+sudo cp -f /etc/containerd/config.toml /etc/containerd/config.toml.bak
+sudo cp -f etc/containerd/config.toml /etc/containerd/config.toml
+
 systemctl daemon-reload
+systemctl restart containerd
 systemctl enable --now kubelet
 #!/bin/bash -x
 #######################################################################################

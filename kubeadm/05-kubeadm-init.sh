@@ -1,13 +1,13 @@
 #!/bin/bash -x
+runPwd=$(pwd)
 cat <<EOF > /tmp/kubeadm.yaml
 ---
 apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration
-maxPods: 256
+maxPods: 64
 cgroupDriver: systemd
 staticPodPath: /etc/kubernetes/manifests
 serializeImagePulls: false
-
 #featureGates:
 #  CPUManager: true
 #cpuManagerPolicy: static
@@ -27,7 +27,7 @@ localAPIEndpoint:
   bindPort: 6443
 nodeRegistration:
   criSocket: /var/run/containerd/containerd.sock
-  name: artemis
+  name: qotom
 # taints:
 # - effect: NoSchedule
 #   key: node-role.kubernetes.io/master
@@ -36,7 +36,7 @@ apiVersion: kubeadm.k8s.io/v1beta2
 apiServer:
   timeoutForControlPlane: 6m0s
 certificatesDir: /etc/kubernetes/pki
-clusterName: artemis
+clusterName: qotom
 controllerManager: {}
 dns:
   type: CoreDNS
@@ -52,17 +52,18 @@ networking:
 scheduler: {}
 EOF
 
+systemctl stop kubelet
+sleep 5
 kubeadm reset
 systemctl start kubelet
 sleep 10
-runPwd=$(pwd)
-mkdir -p /etc/artemis
-cd /etc/artemis
+
+mkdir -p /etc/qotom
+cd /etc/qotom
 kubeadm init \
-    --node-name artemis \
+    --node-name qotom \
     --config /tmp/kubeadm.yaml \
-    --cri-socket /var/run/containerd/containerd.sock \
-    $@
+    --cri-socket /var/run/containerd/containerd.sock
 
 #   --apiserver-cert-extra-sans="artemis.codectl.io" \
 #   --apiserver-cert-extra-sans="api.artemis.codectl.io" \
@@ -70,17 +71,12 @@ kubeadm init \
 #   --log-file='/var/log/artemis.log' \
 
 cd ${runPwd}
-
-sleep 10
-
-export KUBECONFIG=/etc/kubernetes/admin.conf
-kubectl taint nodes --all node-role.kubernetes.io/master-
-kubectl label nodes artemis node-role.kubernetes.io/worker=""
+mkdir -p $HOME/.kube
+sudo cp -ifr /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 export KUBECONFIG=/root/.kube/config
-mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
+sleep 10
 kubectl get nodes
 
 #   --cgroup-driver systemd \

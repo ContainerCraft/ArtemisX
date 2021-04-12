@@ -2878,7 +2878,6 @@ spec:
           optional: true
           secretName: argocd-repo-server-tls
 ---
----
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -2890,7 +2889,7 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
   rules:
-  - host: argocd.artemis.labs
+  - host: argocd.qotom.qubris.io
     http:
       paths:
       - pathType: Prefix
@@ -2902,9 +2901,8 @@ spec:
               name: http
   tls:
   - hosts:
-    - argocd.artemis.labs
+    - argocd.qotom.qubris.io
     secretName: argocd-secret # do not change, this is provided by Argo CD
----
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -2916,7 +2914,7 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
 spec:
   rules:
-  - host: grpc.argocd.artemis.labs
+  - host: grpc.argocd.qotom.qubris.io
     http:
       paths:
       - pathType: Prefix
@@ -2928,5 +2926,5 @@ spec:
               name: https
   tls:
   - hosts:
-    - grpc.argocd.artemis.labs
+    - grpc.argocd.qotom.qubris.io
     secretName: argocd-secret # do not change, this is provided by Argo CD
