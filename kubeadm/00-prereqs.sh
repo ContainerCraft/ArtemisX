@@ -47,7 +47,7 @@ fedora () {
   sudo touch /etc/systemd/zram-generator.conf
 
   sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
-  sudo grubby --update-kernel=ALL --args 'ipv6.disable=1 setenforce=0 cgroup_memory=1 cgroup_enable=cpuset cgroup_enable=memory systemd.unified_cgroup_hierarchy=0 intel_iommu=on iommu=pt rd.driver.pre=vfio-pci pci=realloc'
+  sudo grubby --update-kernel=ALL --args 'setenforce=0 cgroup_memory=1 cgroup_enable=cpuset cgroup_enable=memory systemd.unified_cgroup_hierarchy=0 intel_iommu=on iommu=pt rd.driver.pre=vfio-pci pci=realloc'
 
   sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
   sudo sed -i 's/$releasever/33/g' /etc/yum.repos.d/docker-ce.repo
