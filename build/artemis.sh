@@ -1,66 +1,74 @@
 #!/bin/bash
-
-rcVersion="2.0.0"
-argoVersion="${rcVersion}"
-#argoVersion=$(curl --silent "https://api.github.com/repos/argoproj/argo-cd/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
-hostpathVersion=$(curl --silent "https://api.github.com/repos/kubevirt/hostpath-provisioner/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
-
-hostPathDeployUrl="https://github.com/kubevirt/hostpath-provisioner/releases/download/${hostpathVersion}/kubevirt-hostpath-provisioner.yaml"
-hostPathSecUrl="https://github.com/kubevirt/hostpath-provisioner/releases/download/${hostpathVersion}/kubevirt-hostpath-security-constraints.yaml"
-
-localPathDeployUrl="https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml"
-
-argoInstallUrl="https://raw.githubusercontent.com/argoproj/argo-cd/v${argoVersion}/manifests/install.yaml"
-
-nginxIngressDeployUrl="https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml"
-
-tektonPipelineDeployUrl="https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml"
-tektonTriggersDeployUrl="https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml"
-tektonDashboardDeployUrl="https://storage.googleapis.com/tekton-releases/dashboard/latest/tekton-dashboard-release.yaml"
-
-echo "---" >> artemis.yml
-cat manifests/artemis-namespace.yml >> artemis.yml
+artemisPath="$(pwd)/artemis"
+rm -rf ${artemisPath}/*
 
 ################################################################################
 # Nginx Ingress
-echo "---" >> artemis.yml
-curl -L ${nginxIngressDeployUrl} >> artemis.yml
+manifests="${artemisPath}/ingress-nginx"
+nginxIngressDeployUrl="https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/baremetal/deploy.yaml"
+#nginxIngressDeployUrl="https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml"
+mkdir -p ${manifests}
+
+echo "---"                        >> ${manifests}/manifest.yml
+curl -L ${nginxIngressDeployUrl}  >> ${manifests}/manifest.yml
 
 ################################################################################
 # Host Path Provisioner
-#echo "---" >> artemis.yml
-#curl -L ${hostPathDeployUrl} >> artemis.yml
+manifests="${artemisPath}/kubevirt-hostpath-provisioner"
+hostpathVersion=$(curl --silent "https://api.github.com/repos/kubevirt/hostpath-provisioner/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+hostPathDeployUrl="https://github.com/kubevirt/hostpath-provisioner/releases/download/${hostpathVersion}/kubevirt-hostpath-provisioner.yaml"
+hostPathSecUrl="https://github.com/kubevirt/hostpath-provisioner/releases/download/${hostpathVersion}/kubevirt-hostpath-security-constraints.yaml"
+mkdir -p ${manifests}
 
-#echo "---" >> artemis.yml
-#curl -L ${hostPathSecUrl} >> artemis.yml
+echo "---"                        >> ${manifests}/manifest.yml
+curl -L ${hostPathDeployUrl}      >> ${manifests}/manifest.yml
 
-#echo "---" >> artemis.yml
-#cat manifests/hostpath.yml >> artemis.yml
+echo "---"                        >> ${manifests}/manifest.yml
+curl -L ${hostPathSecUrl}         >> ${manifests}/manifest.yml
 
-################################################################################
-# LocalPath Provisioner Default Storage Class
-echo "---" >> artemis.yml
-curl -L ${localPathDeployUrl} >> artemis.yml
+sed -i -e :a -e '$d;N;2,25ba' -e 'P;D' artemis/kubevirt-hostpath-provisioner/manifest.yml
 
-echo "---" >> artemis.yml
-cat patch/localpath.yml >> artemis.yml
+echo "---"                        >> ${manifests}/manifest.yml
+cat patch/hostpath-default.yml    >> ${manifests}/manifest.yml
 
 ################################################################################
 # ArgoCD
-echo "---" >> artemis.yml
-curl -L ${argoInstallUrl} >> artemis.yml
+manifests="${artemisPath}/argocd"
+argoVersion=$(curl --silent "https://api.github.com/repos/argoproj/argo-cd/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+argoInstallUrl="https://raw.githubusercontent.com/argoproj/argo-cd/${argoVersion}/manifests/install.yaml"
+mkdir -p ${manifests}
+
+echo "---"                        >> ${manifests}/manifest.yml
+cat patch/argo-namespace.yml      >> ${manifests}/manifest.yml
+
+echo "---"                        >> ${manifests}/manifest.yml
+curl -L ${argoInstallUrl}         >> ${manifests}/manifest.yml
+
+echo "---"                        >> ${manifests}/manifest.yml
+cat patch/argo-ingress-https.yml  >> ${manifests}/manifest.yml
+
+echo "---"                        >> ${manifests}/manifest.yml
+cat patch/argo-ingress-grpc.yml   >> ${manifests}/manifest.yml
+
+#echo "---"                        >> ${manifests}/manifest.yml
+#cat patch/argo-server-patch.yml   >> ${manifests}/manifest.yml
+
+################################################################################
+# LocalPath Provisioner Default Storage Class
+#localPathDeployUrl="https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml"
 
 #echo "---" >> artemis.yml
-#cat patch/argocd-server-patch.yml >> artemis.yml
+#curl -L ${localPathDeployUrl} >> artemis.yml
 
-echo "---" >> artemis.yml
-cat manifests/argo-ingress-https.yml >> artemis.yml
-
-echo "---" >> artemis.yml
-cat manifests/argo-ingress-grpc.yml >> artemis.yml
+#echo "---" >> artemis.yml
+#cat patch/localpath.yml >> artemis.yml
 
 ################################################################################
 # Tekton Pipelines
+#tektonPipelineDeployUrl="https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml"
+#tektonTriggersDeployUrl="https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml"
+#tektonDashboardDeployUrl="https://storage.googleapis.com/tekton-releases/dashboard/latest/tekton-dashboard-release.yaml"
+
 #echo "---" >> artemis.yml
 #curl -L ${tektonPipelineDeployUrl} >> artemis.yml
 

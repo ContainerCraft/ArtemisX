@@ -23,7 +23,7 @@ bootstrapTokens:
   - authentication
 kind: InitConfiguration
 localAPIEndpoint:
-  advertiseAddress: $(ip -4 -o addr show eth0 | awk -F'[/ ]' '{print $7}')
+  advertiseAddress: $(ip -4 -o addr show enp1s0 | awk -F'[/ ]' '{print $7}')
   bindPort: 6443
 nodeRegistration:
   criSocket: /var/run/containerd/containerd.sock
@@ -53,6 +53,8 @@ scheduler: {}
 EOF
 
 kubeadm reset
+systemctl start kubelet
+sleep 10
 runPwd=$(pwd)
 mkdir -p /etc/artemis
 cd /etc/artemis
