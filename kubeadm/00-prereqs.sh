@@ -72,7 +72,7 @@ extras () {
  #sudo usermod -aG libvirt ${LOCAL_USER}
 }
 
-dependencies_core () {
+basic () {
   sudo hostnamectl set-hostname ${LOCAL_HOSTNAME}
   sudo git clone https://github.com/containercraft/artemis.git /root/artemis
 }
