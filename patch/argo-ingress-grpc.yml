@@ -8,7 +8,7 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: GRPC
 spec:
   rules:
-  - host: grpc.argocd.qotom.qubris.io
+  - host: grpc.argocd.spindle.qubris.io
     http:
       paths:
       - backend:
@@ -20,5 +20,5 @@ spec:
         pathType: Prefix
   tls:
   - hosts:
-    - grpc.argocd.qotom.qubris.io
+    - grpc.argocd.spindle.qubris.io
     secretName: argocd-secret

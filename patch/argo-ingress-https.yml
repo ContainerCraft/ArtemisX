@@ -9,7 +9,7 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   rules:
-  - host: argocd.qotom.qubris.io
+  - host: argocd.spindle.qubris.io
     http:
       paths:
       - backend:
@@ -21,5 +21,5 @@ spec:
         pathType: Prefix
   tls:
   - hosts:
-    - argocd.qotom.qubris.io
+    - argocd.spindle.qubris.io
     secretName: argocd-secret
