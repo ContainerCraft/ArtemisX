@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -x
 GHUSER="usrbinkat"
 LOCAL_USER="usrbinkat"
 LOCAL_HOSTNAME="qotom"
