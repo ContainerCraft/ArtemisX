@@ -48,6 +48,8 @@ fedora () {
 
   sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
   sudo grubby --update-kernel=ALL --args 'setenforce=0 cgroup_memory=1 cgroup_enable=cpuset cgroup_enable=memory systemd.unified_cgroup_hierarchy=0 intel_iommu=on iommu=pt rd.driver.pre=vfio-pci pci=realloc'
+ #grubby --update-kernel=ALL --args="noibrs noibpb nopti nospectre_v2 nospectre_v1 l1tf=off nospec_store_bypass_disable no_stf_barrier mds=off mitigations=off"
+ #grubby --update-kernel=ALL --args="mitigations=off"
 
   sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
   sudo sed -i 's/$releasever/33/g' /etc/yum.repos.d/docker-ce.repo
