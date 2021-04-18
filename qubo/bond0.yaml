@@ -6,6 +6,8 @@ kind: NodeNetworkConfigurationPolicy
 metadata:
   name: bond
 spec:
+  nodeSelector:
+    node-role.kubernetes.io/kubevirt: ""
   desiredState:
     interfaces:
     - name: bond0
@@ -22,7 +24,8 @@ spec:
         options:
           miimon: '140'
         slaves:
-        - eno2np1
+        - eno1np0
+#       - eno2np1
 #       - ens2f0
 #       - ens2f1
 #       - eth2
@@ -33,6 +36,8 @@ kind: NodeNetworkConfigurationPolicy
 metadata:
   name: linux-bridge
 spec:
+  nodeSelector:
+    node-role.kubernetes.io/kubevirt: ""
   desiredState:
     interfaces:
     - name: br0
@@ -48,16 +53,16 @@ spec:
       bridge:
         options:
           stp:
-            enabled: false
+            enabled: true
         port:
         - name: bond0
+        - name: eno2np1
 ---
 apiVersion: k8s.cni.cncf.io/v1
 kind: NetworkAttachmentDefinition
 metadata:
   name: br0
-  annotations:
-    k8s.v1.cni.cncf.io/resourceName: bridge.network.kubevirt.io/br0
+  namespace: kargo
 spec:
   config: >
     {

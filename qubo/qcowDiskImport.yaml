@@ -1,19 +1,4 @@
 ---
-apiVersion: cdi.kubevirt.io/v1beta1
-kind: DataVolume
-metadata:
-  name: registry-image-datavolume
-spec:
-  source:
-    registry:
-      url: "docker://quay.io/codesparta/rhel-kvm"
-  pvc:
-    accessModes:
-      - ReadWriteOnce
-    resources:
-      requests:
-        storage: 16Gi
----
 apiVersion: kubevirt.io/v1alpha3
 kind: VirtualMachine
 metadata:
@@ -50,13 +35,13 @@ spec:
           threads: 1
         devices:
           disks:
-            - bootOrder: 1
+            - name: disk-0
+              bootOrder: 1
               disk:
                 bus: virtio
-              name: disk-0
-            - disk:
+            - name: cloudinitdisk
+              disk:
                 bus: virtio
-              name: cloudinitdisk
           interfaces:
             - bootOrder: 2
               masquerade: {}

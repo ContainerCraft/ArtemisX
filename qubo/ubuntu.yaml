@@ -3,17 +3,20 @@ apiVersion: kubevirt.io/v1alpha3
 kind: VirtualMachine
 metadata:
   name: ubuntu
+  namespace: kargo
+  labels:
+    app: coreos
 spec:
   running: true
   template:
     spec:
       nodeSelector:
-        kubernetes.io/hostname: artemis
+        node-role.kubernetes.io/kubevirt: ""
       domain:
         cpu:
-          cores: 4
-          sockets: 1
+          sockets: 8
           threads: 1
+          cores: 1
         devices:
           disks:
             - name: containerdisk
@@ -24,6 +27,7 @@ spec:
                 bus: virtio
           interfaces:
           - name: eth0
+            model: virtio
             bridge: {}
         machine:
           type: ""
@@ -52,8 +56,9 @@ spec:
               chown ubuntu:ubuntu /home/ubuntu/.ssh/authorized_keys
               chmod 600 /home/ubuntu/.ssh/authorized_keys
               sudo apt-get update -y
-              sudo apt-get -y install cloud-initramfs-growroot qemu-guest-agent openssh-server runc podman lnav tmux vim
+              sudo apt-get -y --install-recommends install qemu-guest-agent
               sudo systemctl enable --now qemu-guest-agent
+              sudo apt-get -y install cloud-initramfs-growroot qemu-guest-agent openssh-server runc podman lnav tmux vim
               sudo systemctl enable --now sshd
               sudo growpart /dev/vda 1
               sudo apt-get upgrade -y
