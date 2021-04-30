@@ -6,7 +6,9 @@ metadata:
   namespace: kubevirt
 spec:
   certificateRotateStrategy: {}
-  configuration: {}
+  configuration:
+    developerConfiguration:
+      featureGates: []
   customizeComponents: {}
   imagePullPolicy: IfNotPresent
   workloadUpdateStrategy: {}

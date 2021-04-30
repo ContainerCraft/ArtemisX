@@ -1,8 +1,10 @@
 #!/bin/bash -ex
+KUBECONFIG=~/.kube/microk8s
 #################################################################################
 networkaddonsVersion=$(curl --silent "https://api.github.com/repos/kubevirt/cluster-network-addons-operator/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
 networkaddonsUrl="https://github.com/kubevirt/cluster-network-addons-operator/releases/download/${networkaddonsVersion}"
 namespace="${networkaddonsUrl}/namespace.yaml"
+
 crd="${networkaddonsUrl}/network-addons-config.crd.yaml"
 operator="${networkaddonsUrl}/operator.yaml"
 
@@ -29,7 +31,7 @@ hostpathNamespaceUrl="https://github.com/kubevirt/hostpath-provisioner-operator/
 hostpathOperatorUrl="https://github.com/kubevirt/hostpath-provisioner-operator/releases/download/${hostpathVersion}/operator.yaml"
 hostpathCrUrl="https://github.com/kubevirt/hostpath-provisioner-operator/releases/download/${hostpathVersion}/hostpathprovisioner_cr.yaml"
 hostpathStorageClassUrl="https://github.com/kubevirt/hostpath-provisioner-operator/releases/download/${hostpathVersion}/storageclass-wffc.yaml"
-mkdir -p /var/hpvolumes
+#mkdir -p /var/hpvolumes
 mkdir -p hostpath
 curl -L ${hostpathNamespaceUrl} > hostpath/namespace.yaml
 curl -L ${hostpathOperatorUrl} > hostpath/operator.yaml

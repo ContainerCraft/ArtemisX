@@ -25,6 +25,9 @@ cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
 overlay
 br_netfilter
 EOF
+cat <<EOF | sudo tee /etc/modules-load.d/libvirtd.conf
+vfio-pci
+EOF
 
 sudo modprobe overlay
 sudo modprobe br_netfilter
