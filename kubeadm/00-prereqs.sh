@@ -1,7 +1,7 @@
 #!/bin/bash -x
 GHUSER="usrbinkat"
 LOCAL_USER="usrbinkat"
-LOCAL_HOSTNAME="qotom"
+LOCAL_HOSTNAME="$(hostname)"
 LOCAL_HOME="${HOME}"
 
 run () {
