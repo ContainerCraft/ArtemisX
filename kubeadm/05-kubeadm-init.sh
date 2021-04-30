@@ -1,10 +1,13 @@
 #!/bin/bash -x
+defaultIface=$(ip r | awk '/default/{print $5 ; exit}')
+defaultIp=$(ip -4 -o addr show ${defaultIface} | awk -F'[/ ]' '{print $7}')
 runPwd=$(pwd)
+
 cat <<EOF > /tmp/kubeadm.yaml
 ---
 apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration
-maxPods: 64
+maxPods: 128
 cgroupDriver: systemd
 staticPodPath: /etc/kubernetes/manifests
 serializeImagePulls: false
@@ -23,11 +26,15 @@ bootstrapTokens:
   - authentication
 kind: InitConfiguration
 localAPIEndpoint:
-  advertiseAddress: $(ip -4 -o addr show enp1s0 | awk -F'[/ ]' '{print $7}')
+  advertiseAddress: ${defaultIp}
   bindPort: 6443
 nodeRegistration:
   criSocket: /var/run/containerd/containerd.sock
-  name: qotom
+  name: $(hostname) 
+# labels:
+#   - node-role.kubernetes.io/master
+#   - node-role.kubernetes.io/worker
+#   - node-role.kubernetes.io/kubevirt
 # taints:
 # - effect: NoSchedule
 #   key: node-role.kubernetes.io/master
@@ -36,7 +43,7 @@ apiVersion: kubeadm.k8s.io/v1beta2
 apiServer:
   timeoutForControlPlane: 6m0s
 certificatesDir: /etc/kubernetes/pki
-clusterName: qotom
+clusterName: $(hostname)
 controllerManager: {}
 dns:
   type: CoreDNS
@@ -45,23 +52,18 @@ etcd:
     dataDir: /var/lib/etcd
 imageRepository: k8s.gcr.io
 kind: ClusterConfiguration
-kubernetesVersion: v1.20.0
+kubernetesVersion: $(kubelet --version | awk '{print $2}')
 networking:
   dnsDomain: codectl.local
   serviceSubnet: 192.96.0.0/12
 scheduler: {}
 EOF
 
-systemctl stop kubelet
-sleep 5
-kubeadm reset
-systemctl start kubelet
-sleep 10
 
-mkdir -p /etc/qotom
-cd /etc/qotom
+mkdir ~/kube
+cd ~/kube
 kubeadm init \
-    --node-name qotom \
+    --node-name $(hostname) \
     --config /tmp/kubeadm.yaml \
     --cri-socket /var/run/containerd/containerd.sock
 

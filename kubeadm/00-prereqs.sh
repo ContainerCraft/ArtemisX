@@ -1,7 +1,7 @@
 #!/bin/bash -x
 GHUSER="usrbinkat"
 LOCAL_USER="usrbinkat"
-LOCAL_HOSTNAME="qotom"
+LOCAL_HOSTNAME="$(hostname)"
 LOCAL_HOME="${HOME}"
 
 run () {
@@ -56,9 +56,11 @@ fedora () {
 
   sudo dnf update -y
   sudo dnf remove -y podman container-selinux zram-generator-defaults
-  sudo dnf -y install git socat ethtool ebtables iproute-tc conntrack-tools containerd.io docker-ce-cli
- #sudo dnf -y install git socat ethtool ebtables iproute-tc conntrack-tools containerd.io docker-ce-cli docker-ce
+  sudo dnf -y install git socat ethtool ebtables iproute-tc conntrack-tools containerd.io docker-ce-cli docker-ce
+ #sudo dnf -y install git socat ethtool ebtables iproute-tc conntrack-tools containerd.io docker-ce-cli
 
+  systemctl enable --now docker
+  systemctl enable --now containerd
   sudo systemctl enable containerd
   sudo systemctl enable docker
 
