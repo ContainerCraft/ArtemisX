@@ -7,10 +7,10 @@ cat <<EOF > /tmp/kubeadm.yaml
 ---
 apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration
-maxPods: 64
+maxPods: 128
 cgroupDriver: systemd
 staticPodPath: /etc/kubernetes/manifests
-serializeImagePulls: true
+serializeImagePulls: false
 #featureGates:
 #  CPUManager: true
 #cpuManagerPolicy: static
