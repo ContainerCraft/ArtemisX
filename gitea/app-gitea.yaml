@@ -1,0 +1,115 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitea
+  namespace: argocd
+spec:
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - Replace=false
+      - Validate=true
+      - PruneLast=true
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - PrunePropagationPolicy=background
+  destination:
+    name: ''
+    namespace: gitea
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: ''
+    chart: gitea
+    targetRevision: 3.0.0
+    repoURL: 'https://dl.gitea.io/charts/'
+    helm:
+      values: >-
+        replicaCount: 1
+        clusterDomain: cluster.local
+        image:
+          tag: 1.14.1
+          rootless: false
+          pullPolicy: Always
+          repository: gitea/gitea
+        service:
+          http:
+            port: 3000
+            type: ClusterIP
+            clusterIP: None
+        ingress:
+          enabled: true
+          annotations:
+            kubernetes.io/ingress.class: kong
+          hosts:
+            - git.codectl.lab
+          tls:
+          - secretName: chart-example-tls
+            hosts:
+              - git.codectl.lab
+        statefulset:
+          terminationGracePeriodSeconds: 60
+        persistence:
+          enabled: true
+          size: 10Gi
+          accessModes:
+            - ReadWriteOnce
+        initPreScript: ""
+        gitea:
+          admin:
+            username: admin
+            password: SuperSecretPassword
+            email: "gitea@local.domain"
+          metrics:
+            enabled: false
+            serviceMonitor:
+              enabled: false
+          ldap:
+            enabled: false
+          oauth:
+            enabled: false
+          database:
+            builtIn:
+              postgresql:
+                enabled: true
+              mysql:
+                enabled: false
+              mariadb:
+                enabled: false
+          cache:
+            builtIn:
+              enabled: true
+          livenessProbe:
+            enabled: true
+            initialDelaySeconds: 200
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 10
+          readinessProbe:
+            enabled: true
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          startupProbe:
+            enabled: false
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 10
+        memcached:
+          service:
+            port: 11211
+        postgresql:
+          global:
+            postgresql:
+              postgresqlDatabase: gitea
+              postgresqlUsername: gitea
+              postgresqlPassword: gitea
+              servicePort: 5432
+          persistence:
+            size: 16Gi

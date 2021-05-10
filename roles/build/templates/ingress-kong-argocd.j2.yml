@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-server-http-ingress
+  namespace: argocd
+  annotations:
+    kubernetes.io/ingress.class: kong
+    ingress.kubernetes.io/ssl-redirect: "false"
+  labels:
+    app.kubernetes.io/name: argocd
+    app.kubernetes.io/instance: argocd
+  generation: 3
+spec:
+  rules:
+  - host: "console.argocd.codectl.lab"
+    http:
+      paths:
+      - backend:
+          service:
+            name: argocd-server
+            port:
+              name: https
+        path: /
+        pathType: Prefix
+  - host: "grpc.argocd.codectl.lab"
+    http:
+      paths:
+      - backend:
+          service:
+            name: argocd-server
+            port:
+              name: https
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - "console.argocd.codectl.lab"
+    - "grpc.argocd.codectl.lab"
