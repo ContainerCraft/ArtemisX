@@ -1,40 +1,74 @@
 #!/bin/bash
-artemisPath="$(pwd)/artemis"
-rm -rf ${artemisPath}/*
+#set -x
+clear
+export TERM="screen-256color"
 
-################################################################################
-# ArgoCD
-manifests="${artemisPath}/argocd"
-argoVersion=$(curl --silent "https://api.github.com/repos/argoproj/argo-cd/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
-argoInstallUrl="https://raw.githubusercontent.com/argoproj/argo-cd/${argoVersion}/manifests/install.yaml"
-mkdir -p ${manifests}
+inform () {
+cat <<EOF
+>>
+>> INFO: Successfully started developer container
+>>
+>> INFO: Connect to the developer with the following command:
+>>
+>>         ${runCmd} exec -it artemis-builder connect
+>>
+EOF
+}
 
-echo "---"                        >> ${manifests}/manifest.yml
-cat patch/argo-namespace.yml      >> ${manifests}/manifest.yml
+dev () {
+${runCmd} kill artemis-dev container >/dev/null
+cat <<EOF
+>> INFO: Starting artemis-builder-dev container
+EOF
+${runCmd} pull -q quay.io/cloudctl/konductor:latest
+${runCmd} run -d \
+    --name artemis-builder-dev \
+    --rm --workdir /build \
+    --volume $(pwd):/build \
+    --hostname artemis-builder-dev \
+    -u $(id -u):$(id -g) --user root \
+  quay.io/cloudctl/konductor:latest
+[[ $? == 0 ]] && inform
+}
 
-echo "---"                        >> ${manifests}/manifest.yml
-curl -L ${argoInstallUrl}         >> ${manifests}/manifest.yml
+build () {
+cat <<EOF
+>> INFO: Starting builder container
+EOF
+${runCmd} pull -q quay.io/cloudctl/ansible:latest
+${runCmd} run -t --pull never \
+    --rm --workdir /build \
+    --volume $(pwd):/build \
+    --entrypoint ./build.yml \
+    --hostname builder --name builder \
+    -u $(id -u):$(id -g) --user root \
+  quay.io/cloudctl/ansible:latest
 
-echo "---"                        >> ${manifests}/manifest.yml
-cat patch/argo-ingress-https.yml  >> ${manifests}/manifest.yml
+[[ $? == 0 ]] && git status || echo "failed..."
+sudo chown -R $USER:$USER ./
+echo
+}
 
-echo "---"                        >> ${manifests}/manifest.yml
-cat patch/argo-ingress-grpc.yml   >> ${manifests}/manifest.yml
+run () {
+if [[ -z "${mode}" ]]; then
+    runMode=build
+else
+    runMode=dev
+fi
 
-#echo "---"                        >> ${manifests}/manifest.yml
-#cat patch/argo-server-patch.yml   >> ${manifests}/manifest.yml
+dockerPath=$(which docker)
+podmanPath=$(which podman)
+if [[ ! ${dockerPath} == "1" ]]; then
+  runCmd=${dockerPath};
+elif [[ ! ${podmanPath} == "1" ]]; then
+  runCmd=${podmanPath}
+else
+    echo ">> ERR: No container runtime found! Aborting...";
+    runCmd=null
+fi
 
-################################################################################
-# Tekton Pipelines
-tektonPipelineDeployUrl="https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml"
-tektonTriggersDeployUrl="https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml"
-tektonDashboardDeployUrl="https://storage.googleapis.com/tekton-releases/dashboard/latest/tekton-dashboard-release.yaml"
+[[ ! ${runCmd} == "null" ]] && ${runMode}
+}
 
-echo "---" >> artemis.yml
-curl -L ${tektonPipelineDeployUrl} >> artemis.yml
-
-echo "---" >> artemis.yml
-curl -L ${tektonTriggersDeployUrl} >> artemis.yml
-
-echo "---" >> artemis.yml
-curl -L ${teltonDashboardDeployUrl} >> artemis.yml
+mode="$1"
+run

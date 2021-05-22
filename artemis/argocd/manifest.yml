@@ -2550,7 +2550,7 @@ spec:
         - -n
         - /usr/local/bin/argocd
         - /shared/argocd-dex
-        image: quay.io/argoproj/argocd:v2.0.0
+        image: quay.io/argoproj/argocd:v2.0.1
         imagePullPolicy: Always
         name: copyutil
         volumeMounts:
@@ -2650,7 +2650,7 @@ spec:
         - argocd-repo-server
         - --redis
         - argocd-redis:6379
-        image: quay.io/argoproj/argocd:v2.0.0
+        image: quay.io/argoproj/argocd:v2.0.1
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
@@ -2746,7 +2746,7 @@ spec:
         - argocd-server
         - --staticassets
         - /shared/app
-        image: quay.io/argoproj/argocd:v2.0.0
+        image: quay.io/argoproj/argocd:v2.0.1
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
@@ -2839,7 +2839,7 @@ spec:
         - "20"
         - --operation-processors
         - "10"
-        image: quay.io/argoproj/argocd:v2.0.0
+        image: quay.io/argoproj/argocd:v2.0.1
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
@@ -2881,50 +2881,50 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: argocd-server-http-ingress
   namespace: argocd
+  name: argocd-server-http-ingress
   annotations:
-    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: HTTP
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
   rules:
-  - host: argocd.qotom.qubris.io
+  - host: argocd.spindle.qubris.io
     http:
       paths:
-      - pathType: Prefix
-        path: /
-        backend:
+      - backend:
           service:
             name: argocd-server
             port:
               name: http
+        path: /
+        pathType: Prefix
   tls:
   - hosts:
-    - argocd.qotom.qubris.io
-    secretName: argocd-secret # do not change, this is provided by Argo CD
+    - argocd.spindle.qubris.io
+    secretName: argocd-secret
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: argocd-server-grpc-ingress
   namespace: argocd
+  name: argocd-server-grpc-ingress
   annotations:
-    kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: GRPC
 spec:
   rules:
-  - host: grpc.argocd.qotom.qubris.io
+  - host: grpc.argocd.spindle.qubris.io
     http:
       paths:
-      - pathType: Prefix
-        path: /
-        backend:
+      - backend:
           service:
             name: argocd-server
             port:
               name: https
+        path: /
+        pathType: Prefix
   tls:
   - hosts:
-    - grpc.argocd.qotom.qubris.io
-    secretName: argocd-secret # do not change, this is provided by Argo CD
+    - grpc.argocd.spindle.qubris.io
+    secretName: argocd-secret
