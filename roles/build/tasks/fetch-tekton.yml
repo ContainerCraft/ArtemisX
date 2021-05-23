@@ -1,0 +1,32 @@
+---
+- name: "{{ plugin.name }} | Tekton Pipeline | Lookup Release"
+  github_release:
+    repo: pipeline
+    user: tektoncd
+    action: latest_release
+  register: tekton_pipeline_release
+
+- name: '{{ plugin.name }} | Tekton Pipeline | Fetch Release {{ tekton_pipeline_release.tag }}'
+  get_url:
+    url: '{{ import.tknpipeline.url }}/{{ release }}/{{ item }}'
+    dest: '{{ dir.source }}/tekton/pipeline-release.yaml'
+  vars:
+    release: '{{ tekton_pipeline_release.tag }}'
+  with_items:
+    - '{{ import.tknpipeline.release }}' 
+
+- name: "{{ plugin.name }} | Tekton Pipeline | Lookup Release"
+  github_release:
+    repo: dashboard
+    user: tektoncd
+    action: latest_release
+  register: tekton_dashboard_release
+
+- name: '{{ plugin.name }} | Tekton Pipeline | Fetch Release {{ tekton_dashboard_release.tag }}'
+  get_url:
+    url: '{{ import.tkndashboard.url }}/{{ release }}/{{ item }}'
+    dest: '{{ dir.source }}/tekton/dashboard-release.yaml'
+  vars:
+    release: '{{ tekton_dashboard_release.tag }}'
+  with_items:
+    - '{{ import.tkndashboard.release }}' 

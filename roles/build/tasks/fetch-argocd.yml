@@ -1,0 +1,16 @@
+---
+- name: "{{ plugin.name }} | Argo CD | Lookup Release"
+  github_release:
+    repo: argo-cd
+    user: argoproj
+    action: latest_release
+  register: argo_cd_release
+
+- name: '{{ plugin.name }} | Argo CD | Fetch Release {{ argo_cd_release.tag }}'
+  get_url:
+    url: '{{ import.argocd.url }}/{{ release }}/manifests/{{ item }}'
+    dest: '{{ dir.source }}/argocd'
+  vars:
+    release: '{{ argo_cd_release.tag }}'
+  with_items:
+    - '{{ import.argocd.install }}' 

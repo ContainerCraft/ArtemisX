@@ -6,10 +6,6 @@
   with_items:
     - '{{ dir.tmp }}'
     - '{{ dir.source }}'
-    - '{{ import.meta.dest }}'
-    - '{{ import.kubevirt.dest }}'
-    - '{{ import.cert_manager.dest }}'
-    - '{{ import.network_addons.dest }}'
-    - '{{ import.hostpath_provisioner.dest }}'
-    - '{{ import.containerized_data_importer.dest }}'
-#   - '{{ import..dest }}'
+    - '{{ import.argocd.dest }}'
+    - '{{ import.tknpipeline.dest }}'
+    - '{{ import.tkndashboard.dest }}'

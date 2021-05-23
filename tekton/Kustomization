@@ -1,10 +1,11 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: tekton-pipelines
 metadata:
-  name: artemis
+  name: tekton
 commonLabels:
   app: artemis
 resources:
-- argocd
-- tekton
+- dashboard-release.yaml
+- pipeline-release.yaml
