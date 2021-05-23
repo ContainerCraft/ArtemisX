@@ -49,7 +49,7 @@ sudo chown -R $USER:$USER ./
 echo
 }
 
-run () {
+run_build () {
 if [[ -z "${mode}" ]]; then
     runMode=build
 else
@@ -71,4 +71,5 @@ fi
 }
 
 mode="$1"
-run
+run_build
+

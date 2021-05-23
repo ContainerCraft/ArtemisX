@@ -1,0 +1,26 @@
+---
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+name: artemis-test
+runtimeConfig:
+  "api/alpha": "false"
+networking:
+  podSubnet: "10.244.0.0/16"
+  serviceSubnet: "10.96.0.0/12"
+  apiServerAddress: "127.0.0.1"
+  apiServerPort: 6443
+nodes:
+- role: control-plane
+  image: docker.io/kindest/node@sha256:fae9a58f17f18f06aeac9772ca8b5ac680ebbed985e266f711d936e91d113bad
+- role: worker
+  image: docker.io/kindest/node@sha256:fae9a58f17f18f06aeac9772ca8b5ac680ebbed985e266f711d936e91d113bad
+- role: worker
+  image: docker.io/kindest/node@sha256:fae9a58f17f18f06aeac9772ca8b5ac680ebbed985e266f711d936e91d113bad
+---
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+kubernetesVersion: v1.16.0
+apiServer:
+  extraArgs:
+    enable-admission-plugins: AlwaysPullImages,DefaultStorageClass
+    anonymous-auth: "false"
