@@ -20,9 +20,6 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
 
-    - name: Create k8s Kind Cluster
-      uses: helm/kind-action@v1.1.0
-
     - uses: actions/checkout@v2.3.4
 
     - name: Build Manifests
@@ -36,6 +33,9 @@ jobs:
         git stage -A
         git commit -m "auto updates" --all 2>&1 || true
         git push origin main
+
+    - name: Create k8s Kind Cluster
+      uses: helm/kind-action@v1.1.0
 
     - name: Validate
       run: |
