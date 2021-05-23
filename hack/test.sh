@@ -17,11 +17,9 @@ get_bin () {
 
 run_test () {
 export PATH=$PATH:$(pwd)/bin
-kind create cluster --config ./hack/kind.yml
-sleep 4
+#kind create cluster --config ./hack/kind.yml
 kubectl create namespace argocd
 kubectl create namespace tekton-pipelines
-sleep 4
 kubectl kustomize https://github.com/containercraft/artemis.git | kubectl apply -f -
 }
 

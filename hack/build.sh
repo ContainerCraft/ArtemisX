@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -x
+set -x
 clear
 export TERM="screen-256color"
 
@@ -72,4 +72,3 @@ fi
 
 mode="$1"
 run_build
-./hack/test.sh
