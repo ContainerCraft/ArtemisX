@@ -17,12 +17,16 @@ get_bin () {
 
 run_test () {
 export PATH=$PATH:$(pwd)/bin
-kind create cluster --config ./config.yml
+kind create cluster --config ./hack/kind.yml
+sleep 4
+kubectl create namespace argocd
+kubectl create namespace tekton-pipelines
+sleep 4
 kubectl kustomize https://github.com/containercraft/artemis.git | kubectl apply -f -
 }
 
 cleanup () {
-  kind clusters delete artemis-test
+  kind delete cluster --name artemis-test
 }
 
 run () {

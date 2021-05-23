@@ -72,4 +72,4 @@ fi
 
 mode="$1"
 run_build
-
+./hack/test.sh
