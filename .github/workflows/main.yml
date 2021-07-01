@@ -35,7 +35,7 @@ jobs:
         git push origin main
 
     - name: Create k8s Kind Cluster
-      uses: helm/kind-action@v1.1.0
+      uses: helm/kind-action@v1.2.0
 
     - name: Validate
       run: |
