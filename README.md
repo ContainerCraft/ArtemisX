@@ -7,6 +7,12 @@ Included:
   - Argo CD
 
 ### Install:
+  - Install
 ```sh
-kubectl kustomize https://github.com/containercraft/artemis.git | kubectl apply -f -
+kubectl create namespace argocd --dry-run=client -oyaml | kubectl apply -f -
+kubectl kustomize https://github.com/containercraft/artemis | kubectl apply -f -
+```
+  - Set admin password to `admin:admin` (unsafe)
+```sh
+kubectl -n argocd patch secret argocd-secret -p '{"stringData": {"admin.password": "$2a$10$mivhwttXM0U5eBrZGtAG8.VSRL1l9cZNAmaSaqotIzXRBRwID1NT.","admin.passwordMtime": "'$(date +%FT%T)'"}}'
 ```
