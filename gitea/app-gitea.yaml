@@ -23,7 +23,7 @@ spec:
   source:
     path: ''
     chart: gitea
-    targetRevision: 3.0.0
+    targetRevision: 4.0.3
     repoURL: 'https://dl.gitea.io/charts/'
     helm:
       values: >-
@@ -44,11 +44,11 @@ spec:
           annotations:
             kubernetes.io/ingress.class: kong
           hosts:
-            - git.codectl.lab
+            - git.kongeelab.arpa
           tls:
           - secretName: chart-example-tls
             hosts:
-              - git.codectl.lab
+              - git.kongeelab.arpa
         statefulset:
           terminationGracePeriodSeconds: 60
         persistence:
