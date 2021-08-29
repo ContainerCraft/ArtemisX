@@ -9,4 +9,6 @@ commonLabels:
 resources:
 - install.yaml
 - ingress.yaml
+
+patchesStrategicMerge:
 - deployment.yaml
