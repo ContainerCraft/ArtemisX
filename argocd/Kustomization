@@ -8,5 +8,5 @@ commonLabels:
   app: artemis
 resources:
 - install.yaml
-- deployment.yaml
 - ingress.yaml
+- deployment.yaml
