@@ -16,3 +16,7 @@ kubectl kustomize https://github.com/containercraft/artemis | kubectl apply -f -
 ```sh
 kubectl -n argocd patch secret argocd-secret -p '{"stringData": {"admin.password": "$2a$10$mivhwttXM0U5eBrZGtAG8.VSRL1l9cZNAmaSaqotIzXRBRwID1NT.","admin.passwordMtime": "'$(date +%FT%T)'"}}'
 ```
+  - Enroll argocd as an argocd managed application
+```sh
+kubectl apply -f https://raw.githubusercontent.com/ContainerCraft/Artemis/main/argocd/application.yaml
+```
