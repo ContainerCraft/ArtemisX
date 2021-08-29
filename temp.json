@@ -1,0 +1,63 @@
+{
+  "apiVersion": "v1",
+  "kind": "Namespace",
+  "metadata": {
+    "annotations": {
+      "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"Namespace\",\"metadata\":{\"annotations\":{},\"labels\":{\"app\":\"artemis\",\"app.kubernetes.io/instance\":\"artemis-tekton\",\"app.kubernetes.io/part-of\":\"tekton-pipelines\"},\"name\":\"tekton-pipelines\"}}\n"
+    },
+    "creationTimestamp": "2021-08-29T17:58:00Z",
+    "deletionTimestamp": "2021-08-29T20:34:56Z",
+    "labels": {
+      "app": "artemis",
+      "app.kubernetes.io/instance": "artemis-tekton",
+      "app.kubernetes.io/part-of": "tekton-pipelines",
+      "kubernetes.io/metadata.name": "tekton-pipelines"
+    },
+    "name": "tekton-pipelines",
+    "resourceVersion": "2737840",
+    "uid": "eeb80606-c90c-4ed4-a97a-c7f97a018708"
+  },
+  "spec": {
+    "finalizers": []
+  },
+  "status": {
+    "conditions": [
+      {
+        "lastTransitionTime": "2021-08-29T20:35:47Z",
+        "message": "All resources successfully discovered",
+        "reason": "ResourcesDiscovered",
+        "status": "False",
+        "type": "NamespaceDeletionDiscoveryFailure"
+      },
+      {
+        "lastTransitionTime": "2021-08-29T20:35:02Z",
+        "message": "All legacy kube types successfully parsed",
+        "reason": "ParsedGroupVersions",
+        "status": "False",
+        "type": "NamespaceDeletionGroupVersionParsingFailure"
+      },
+      {
+        "lastTransitionTime": "2021-08-29T20:35:31Z",
+        "message": "Failed to delete all resource types, 1 remaining: unexpected items still remain in namespace: tekton-pipelines for gvr: /v1, Resource=pods",
+        "reason": "ContentDeletionFailed",
+        "status": "True",
+        "type": "NamespaceDeletionContentFailure"
+      },
+      {
+        "lastTransitionTime": "2021-08-29T20:35:02Z",
+        "message": "Some resources are remaining: pods. has 3 resource instances",
+        "reason": "SomeResourcesRemain",
+        "status": "True",
+        "type": "NamespaceContentRemaining"
+      },
+      {
+        "lastTransitionTime": "2021-08-29T20:35:02Z",
+        "message": "All content-preserving finalizers finished",
+        "reason": "ContentHasNoFinalizers",
+        "status": "False",
+        "type": "NamespaceFinalizersRemaining"
+      }
+    ],
+    "phase": "Terminating"
+  }
+}
