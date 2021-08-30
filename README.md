@@ -31,4 +31,5 @@ kubectl apply -f https://raw.githubusercontent.com/ContainerCraft/Artemis/main/a
 ```
 ```
 kubectl kustomize https://github.com/containercraft/artemis/metallb | kubectl apply -f -
+kubectl kustomize https://github.com/containercraft/artemis/kong    | kubectl apply -f -
 ```
