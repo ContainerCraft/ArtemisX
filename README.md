@@ -30,6 +30,7 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 kubectl apply -f https://raw.githubusercontent.com/ContainerCraft/Artemis/main/argocd/application.yaml
 ```
 ```
+kubectl create namespace argocd --dry-run=client -oyaml                  | kubectl apply -f -
 kubectl kustomize https://github.com/containercraft/artemis/cert-manager | kubectl apply -f -
 kubectl kustomize https://github.com/containercraft/artemis/metallb      | kubectl apply -f -
 kubectl kustomize https://github.com/containercraft/artemis/kargo        | kubectl apply -f -
