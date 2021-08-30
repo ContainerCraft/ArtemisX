@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kong-ingress-controller
+spec:
+  destination:
+    name: ''
+    namespace: kong
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: ''
+    repoURL: 'https://charts.konghq.com'
+    targetRevision: 2.3.0
+    chart: kong
+    helm:
+      parameters:
+        - name: udpProxy.enabled
+          value: 'false'
+        - name: portal.enabled
+          value: 'false'
+        - name: ingressController.installCRDs
+          value: 'false'
+  project: default
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - PruneLast=true
+    automated:
+      prune: true
+      selfHeal: true

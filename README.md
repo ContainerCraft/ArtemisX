@@ -20,6 +20,11 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/appli
 ```sh
 kubectl -n argocd patch secret argocd-secret -p '{"stringData": {"admin.password": "$2a$10$mivhwttXM0U5eBrZGtAG8.VSRL1l9cZNAmaSaqotIzXRBRwID1NT.","admin.passwordMtime": "'$(date +%FT%T)'"}}'
 ```
+  - Port Forward service to localhost
+```sh
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+```
+  - Open in Browser @ http://localhost:8080
   - Enroll argocd as an argocd managed application
 ```sh
 kubectl apply -f https://raw.githubusercontent.com/ContainerCraft/Artemis/main/argocd/application.yaml

@@ -9,16 +9,16 @@ metadata:
     konghq.com/protocols: "http"
     konghq.com/protocol: "https"
    #konghq.com/preserve-host: "true"
-   #cert-manager.io/common-name: "argocd.kongeelabs.arpa"
+   #cert-manager.io/common-name: "argocd.codectl.arpa"
    #cert-manager.io/cluster-issuer: certman-selfsigned-issuer
    #kubernetes.io/tls-acme: "true"
 spec:
   tls:
   - hosts:
-    - argocd.kongeelabs.arpa
+    - argocd.codectl.arpa
     secretName: argocd-secret
   rules:
-  - host: argocd.kongeelabs.arpa
+  - host: argocd.codectl.arpa
     http:
       paths:
       - path: /
@@ -40,16 +40,16 @@ metadata:
     konghq.com/protocols: "grpc,grpcs"
     konghq.com/protocol: "https"
    #konghq.com/preserve-host: "true"
-   #cert-manager.io/common-name: "argocd.kongeelabs.arpa"
+   #cert-manager.io/common-name: "argocd.codectl.arpa"
    #cert-manager.io/cluster-issuer: certman-selfsigned-issuer
    #kubernetes.io/tls-acme: "true"
 spec:
   tls:
   - hosts:
-    - grpc.argocd.kongeelabs.arpa
+    - grpc.argocd.codectl.arpa
     secretName: argocd-secret
   rules:
-  - host: grpc.argocd.kongeelabs.arpa
+  - host: grpc.argocd.codectl.arpa
     http:
       paths:
       - path: /
