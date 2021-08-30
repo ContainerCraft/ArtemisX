@@ -7,4 +7,5 @@ metadata:
 commonLabels:
   containercraft.io/project: artemis
 resources:
-- "https://github.com/containercraft/kargo/cert-manager"
+- "self-signed-issuer.yml"
+# "https://github.com/containercraft/kargo/cert-manager"
