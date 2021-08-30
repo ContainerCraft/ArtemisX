@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cert-manager-parent
+  name: artemis-cert-manager-deployer
   namespace: argocd
 spec:
   destination:
@@ -12,8 +12,8 @@ spec:
     path: cert-manager
     repoURL: 'https://github.com/containercraft/artemis'
     targetRevision: HEAD
-    kustomize:
-      namePrefix: artemis-
+#   kustomize:
+#     namePrefix: artemis-
   project: default
   syncPolicy:
     automated:
