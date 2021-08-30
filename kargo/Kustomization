@@ -6,5 +6,5 @@ metadata:
 commonLabels:
   containercraft.io/project: kargo
 resources:
-- "https://github.com/containercraft/kargo"
-# "application.yml"
+- "application.yml"
+# "https://github.com/containercraft/kargo"
