@@ -1,4 +1,3 @@
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -6,12 +5,14 @@ metadata:
   namespace: argocd
 spec:
   destination:
+    name: ''
     namespace: cert-manager
     server: 'https://kubernetes.default.svc'
   source:
-    path: cert-manager
-    repoURL: 'https://github.com/containercraft/artemis'
-    targetRevision: HEAD
+    path: ''
+    repoURL: 'https://charts.jetstack.io'
+    targetRevision: v1.5.3
+    chart: cert-manager
     helm:
       values: |
         replicaCount: 1

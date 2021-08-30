@@ -3,17 +3,17 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: artemis-cert-manager-parent
+  namespace: argocd
 spec:
   destination:
-    name: ''
-    namespace: ''
+    namespace: 'cert-manager'
     server: 'https://kubernetes.default.svc'
   source:
     path: cert-manager
     repoURL: 'https://github.com/containercraft/artemis'
     targetRevision: HEAD
     kustomize:
-      namePrefix: artemis
+      namePrefix: artemis-
   project: default
   syncPolicy:
     automated:
