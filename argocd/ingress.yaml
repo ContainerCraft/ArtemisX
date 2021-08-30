@@ -13,18 +13,21 @@ metadata:
    #cert-manager.io/cluster-issuer: certman-selfsigned-issuer
    #kubernetes.io/tls-acme: "true"
 spec:
-  rules:
-  - host: argocd.kongeelabs.arpa
-    http:
-      paths:
-      - backend:
-          serviceName: argocd-server
-          servicePort: https
-        path: /
   tls:
   - hosts:
     - argocd.kongeelabs.arpa
     secretName: argocd-secret
+  rules:
+  - host: argocd.kongeelabs.arpa
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: argocd-server
+            port:
+              name: https
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -41,14 +44,18 @@ metadata:
    #cert-manager.io/cluster-issuer: certman-selfsigned-issuer
    #kubernetes.io/tls-acme: "true"
 spec:
-  rules:
-  - http:
-      paths:
-      - backend:
-          serviceName: argocd-server
-          servicePort: https
-    host: grpc.argocd.kongeelabs.arpa
   tls:
   - hosts:
     - grpc.argocd.kongeelabs.arpa
     secretName: argocd-secret
+  rules:
+  - host: grpc.argocd.kongeelabs.arpa
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: argocd-server
+            port:
+              name: https
