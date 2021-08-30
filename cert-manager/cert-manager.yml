@@ -4,10 +4,18 @@ metadata:
   name: cert-manager-application
   namespace: argocd
 spec:
+  project: default
   destination:
-    name: ''
     namespace: cert-manager
     server: 'https://kubernetes.default.svc'
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - PruneLast=true
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
   source:
     path: ''
     repoURL: 'https://charts.jetstack.io'
@@ -94,13 +102,3 @@ spec:
               helm.sh/hook-weight: "-5"
               helm.sh/hook-delete-policy: hook-succeeded
             automountServiceAccountToken: true
-  project: default
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - PruneLast=true
-      - CreateNamespace=true
-      - ApplyOutOfSyncOnly=true
-

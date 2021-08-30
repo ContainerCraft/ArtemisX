@@ -6,6 +6,6 @@ metadata:
 commonLabels:
   containercraft.io/project: artemis-cert-manager
 resources:
-- "cert-manager.yml"
-- "cert-manager.crds.yml"
-- "self-signed-issuer.yml"
+- cert-manager.yml
+- cert-manager.crds.yml
+- self-signed-issuer.yml
