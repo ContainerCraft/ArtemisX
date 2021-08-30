@@ -1,12 +1,11 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: metallb-system
+namespace: argocd
 metadata:
   name: argocd
 commonLabels:
   app: artemis
 resources:
-- "https://github.com/metallb/metallb/manifests"
 - application.yml
 

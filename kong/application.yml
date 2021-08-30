@@ -14,8 +14,6 @@ spec:
     chart: kong
     helm:
       parameters:
-        - name: udpProxy.enabled
-          value: 'false'
         - name: portal.enabled
           value: 'false'
         - name: ingressController.installCRDs
