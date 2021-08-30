@@ -6,7 +6,7 @@ metadata:
   namespace: argocd
 spec:
   destination:
-    name: ''
+    name: 'cert-manager'
     namespace: cert-manager
     server: 'https://kubernetes.default.svc'
   source:
