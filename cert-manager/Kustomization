@@ -2,7 +2,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 metadata:
-  name: cert-manager-parent
+  name: cert-manager-deployer
 commonLabels:
   containercraft.io/project: artemis-cert-manager
 resources:

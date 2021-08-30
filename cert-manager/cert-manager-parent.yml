@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: artemis-cert-manager-parent
+  name: cert-manager-parent
   namespace: argocd
 spec:
   destination:
