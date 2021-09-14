@@ -1,0 +1,204 @@
+---
+# Source: rook-ceph-cluster/templates/cephblockpool.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nvme-ceph-block
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: nvme-rook-ceph.rbd.csi.ceph.com
+parameters:
+  pool: nvme-ceph-blockpool
+  clusterID: nvme-rook-ceph
+  csi.storage.k8s.io/fstype: ext4
+  csi.storage.k8s.io/controller-expand-secret-name: rook-csi-rbd-provisioner
+  csi.storage.k8s.io/controller-expand-secret-namespace: rook-ceph
+  csi.storage.k8s.io/node-stage-secret-name: rook-csi-rbd-node
+  csi.storage.k8s.io/node-stage-secret-namespace: rook-ceph
+  csi.storage.k8s.io/provisioner-secret-name: rook-csi-rbd-provisioner
+  csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph
+  imageFeatures: layering
+  imageFormat: "2"
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+---
+# Source: rook-ceph-cluster/templates/cephfilesystem.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nvme-ceph-filesystem
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: nvme-rook-ceph.cephfs.csi.ceph.com
+parameters:
+  fsName: nvme-ceph-filesystem
+  pool: nvme-ceph-filesystem-data0
+  clusterID: nvme-rook-ceph
+  csi.storage.k8s.io/controller-expand-secret-name: rook-csi-cephfs-provisioner
+  csi.storage.k8s.io/controller-expand-secret-namespace: rook-ceph
+  csi.storage.k8s.io/fstype: ext4
+  csi.storage.k8s.io/node-stage-secret-name: rook-csi-cephfs-node
+  csi.storage.k8s.io/node-stage-secret-namespace: rook-ceph
+  csi.storage.k8s.io/provisioner-secret-name: rook-csi-cephfs-provisioner
+  csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph
+reclaimPolicy: Delete
+---
+# Source: rook-ceph-cluster/templates/cephobjectstore.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nvme-ceph-bucket
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: nvme-rook-ceph.ceph.rook.io/bucket
+reclaimPolicy: Delete
+parameters:
+  objectStoreName: nvme-ceph-objectstore
+  objectStoreNamespace: rook-ceph
+  region: region-kargo-1
+---
+# Source: rook-ceph-cluster/templates/cephblockpool.yaml
+apiVersion: ceph.rook.io/v1
+kind: CephBlockPool
+metadata:
+  name: nvme-ceph-blockpool
+spec:
+  failureDomain: host
+  replicated:
+    size: 3
+---
+# Source: rook-ceph-cluster/templates/cephcluster.yaml
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata:
+  name: nvme-rook-ceph
+spec:
+  monitoring:
+    rulesNamespace: rook-ceph
+    enabled: false
+  cephVersion:
+    allowUnsupported: false
+    image: quay.io/ceph/ceph:v16.2.5
+  cleanupPolicy:
+    allowUninstallWithVolumes: false
+    confirmation: ""
+    sanitizeDisks:
+      dataSource: zero
+      iteration: 1
+      method: quick
+  continueUpgradeAfterChecksEvenIfNotHealthy: false
+  crashCollector:
+    disable: false
+  dashboard:
+    enabled: false
+  dataDirHostPath: /var/lib/rook
+  disruptionManagement:
+    machineDisruptionBudgetNamespace: openshift-machine-api
+    manageMachineDisruptionBudgets: false
+    managePodBudgets: true
+    osdMaintenanceTimeout: 30
+    pgHealthCheckTimeout: 0
+  healthCheck:
+    daemonHealth:
+      mon:
+        disabled: false
+        interval: 45s
+      osd:
+        disabled: false
+        interval: 60s
+      status:
+        disabled: false
+        interval: 60s
+    livenessProbe:
+      mgr:
+        disabled: false
+      mon:
+        disabled: false
+      osd:
+        disabled: false
+  mgr:
+    count: 1
+    modules:
+    - enabled: true
+      name: pg_autoscaler
+  mon:
+    allowMultiplePerNode: false
+    count: 3
+  removeOSDsIfOutAndSafeToRemove: false
+  skipUpgradeChecks: false
+  storage:
+    useAllNodes: true
+    useAllDevices: false
+    deviceFilter: "nvme0n1"
+    onlyApplyOSDPlacement: false
+    nodes:
+    - name: "node1"
+      devices:
+      - name: "nvme0n1"
+        config:
+          osdsPerDevice: "3"
+          encryptedDevice: "false"
+    - name: "node2"
+      devices:
+      - name: "nvme0n1"
+        config:
+          osdsPerDevice: "3"
+          encryptedDevice: "false"
+    - name: "node3"
+      devices:
+      - name: "nvme0n1"
+        config:
+          osdsPerDevice: "3"
+          encryptedDevice: "false"
+  waitTimeoutForHealthyOSDInMinutes: 10
+---
+# Source: rook-ceph-cluster/templates/cephfilesystem.yaml
+apiVersion: ceph.rook.io/v1
+kind: CephFilesystem
+metadata:
+  name: nvme-ceph-filesystem
+spec:
+  dataPools:
+  - failureDomain: host
+    erasureCoded:
+      dataChunks: 2
+      codingChunks: 1
+    parameters:
+      compression_mode: none
+  metadataPool:
+    replicated:
+      size: 3
+  metadataServer:
+    activeCount: 1
+    activeStandby: true
+    resources:
+      limits:
+        cpu: "500m"
+        memory: "1024Mi"
+      requests:
+        cpu: "500m"
+        memory: "1024Mi"
+    priorityClassName: nvme-cephfs-priority-alpha
+---
+# Source: rook-ceph-cluster/templates/cephobjectstore.yaml
+apiVersion: ceph.rook.io/v1
+kind: CephObjectStore
+metadata:
+  name: nvme-ceph-objectstore
+spec:
+  dataPool:
+    erasureCoded:
+      dataChunks: 2
+      codingChunks: 1
+    failureDomain: host
+  gateway:
+    instances: 1
+    port: 80
+  healthCheck:
+    bucket:
+      interval: 60s
+  metadataPool:
+    failureDomain: host
+    replicated:
+      size: 3
+  preservePoolsOnDelete: true

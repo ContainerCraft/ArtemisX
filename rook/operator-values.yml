@@ -1,4 +1,4 @@
-# helm install --create-namespace --namespace rook-ceph rook-ceph rook-release/rook-ceph --values ./operator-values.yml --set crds.enabled=true
+# helm install rook-ceph --namespace rook-ceph --create-namespace rook-release/rook-ceph --values ./rook/operator-values.yml --set crds.enabled=true
 image:
   prefix: rook
   repository: rook/ceph

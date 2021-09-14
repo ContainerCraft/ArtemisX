@@ -1,0 +1,246 @@
+---
+# Source: rook-ceph-cluster/templates/cephblockpool.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nvme-ceph-block
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: rook-ceph.rbd.csi.ceph.com
+parameters:
+  pool: ceph-blockpool
+  clusterID: rook-ceph
+  csi.storage.k8s.io/controller-expand-secret-name: rook-csi-rbd-provisioner
+  csi.storage.k8s.io/controller-expand-secret-namespace: rook-ceph
+  csi.storage.k8s.io/fstype: ext4
+  csi.storage.k8s.io/node-stage-secret-name: rook-csi-rbd-node
+  csi.storage.k8s.io/node-stage-secret-namespace: rook-ceph
+  csi.storage.k8s.io/provisioner-secret-name: rook-csi-rbd-provisioner
+  csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph
+  imageFeatures: layering
+  imageFormat: "2"
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+---
+# Source: rook-ceph-cluster/templates/cephfilesystem.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nvme-ceph-filesystem
+provisioner: rook-ceph.cephfs.csi.ceph.com
+parameters:
+  fsName: ceph-filesystem
+  pool: ceph-filesystem-data0
+  clusterID: rook-ceph
+  csi.storage.k8s.io/controller-expand-secret-name: rook-csi-cephfs-provisioner
+  csi.storage.k8s.io/controller-expand-secret-namespace: rook-ceph
+  csi.storage.k8s.io/fstype: ext4
+  csi.storage.k8s.io/node-stage-secret-name: rook-csi-cephfs-node
+  csi.storage.k8s.io/node-stage-secret-namespace: rook-ceph
+  csi.storage.k8s.io/provisioner-secret-name: rook-csi-cephfs-provisioner
+  csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph
+reclaimPolicy: Delete
+---
+# Source: rook-ceph-cluster/templates/cephobjectstore.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nvme-ceph-bucket
+provisioner: rook-ceph.ceph.rook.io/bucket
+reclaimPolicy: Delete
+parameters:
+  objectStoreName: ceph-objectstore
+  objectStoreNamespace: rook-ceph
+  region: kargo-zone-1
+---
+# Source: rook-ceph-cluster/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rook-ceph-tools
+  labels:
+    app: rook-ceph-tools
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rook-ceph-tools
+  template:
+    metadata:
+      labels:
+        app: rook-ceph-tools
+    spec:
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: rook-ceph-tools
+          image: rook/ceph:v1.7.2
+          command: ["/tini"]
+          args: ["-g", "--", "/usr/local/bin/toolbox.sh"]
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: ROOK_CEPH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: rook-ceph-mon
+                  key: ceph-username
+            - name: ROOK_CEPH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: rook-ceph-mon
+                  key: ceph-secret
+          volumeMounts:
+            - mountPath: /etc/ceph
+              name: ceph-config
+            - name: mon-endpoint-volume
+              mountPath: /etc/rook
+      volumes:
+        - name: mon-endpoint-volume
+          configMap:
+            name: rook-ceph-mon-endpoints
+            items:
+                - key: data
+                  path: mon-endpoints
+        - name: ceph-config
+          emptyDir: {}
+      tolerations:
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 5
+---
+# Source: rook-ceph-cluster/templates/cephblockpool.yaml
+apiVersion: ceph.rook.io/v1
+kind: CephBlockPool
+metadata:
+  name: ceph-blockpool
+spec:
+  failureDomain: host
+  replicated:
+    size: 3
+---
+# Source: rook-ceph-cluster/templates/cephcluster.yaml
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata:
+  name: nvme-rook-ceph
+spec:
+  monitoring:
+    rulesNamespace: rook-ceph
+    enabled: false
+    rulesNamespaceOverride: null
+
+  cephVersion:
+    allowUnsupported: false
+    image: quay.io/ceph/ceph:v16
+  cleanupPolicy:
+    allowUninstallWithVolumes: true
+    confirmation: ""
+    sanitizeDisks:
+      dataSource: zero
+      iteration: 1
+      method: quick
+  continueUpgradeAfterChecksEvenIfNotHealthy: false
+  crashCollector:
+    disable: false
+  dashboard:
+    enabled: false
+  dataDirHostPath: /var/lib/rook
+  disruptionManagement:
+    machineDisruptionBudgetNamespace: openshift-machine-api
+    manageMachineDisruptionBudgets: false
+    managePodBudgets: true
+    osdMaintenanceTimeout: 30
+    pgHealthCheckTimeout: 0
+  healthCheck:
+    daemonHealth:
+      mon:
+        disabled: false
+        interval: 45s
+      osd:
+        disabled: false
+        interval: 60s
+      status:
+        disabled: false
+        interval: 60s
+    livenessProbe:
+      mgr:
+        disabled: false
+      mon:
+        disabled: false
+      osd:
+        disabled: false
+  mgr:
+    count: 1
+    modules:
+    - enabled: true
+      name: pg_autoscaler
+  mon:
+    allowMultiplePerNode: false
+    count: 3
+  removeOSDsIfOutAndSafeToRemove: true
+  skipUpgradeChecks: false
+  storage:
+    deviceFilter: nvme0n1
+    nodes:
+    - devices:
+      - config:
+          encryptedDevice: "false"
+          osdsPerDevice: "3"
+        name: nvme0n1
+      name: node1
+    - devices:
+      - config:
+          encryptedDevice: "false"
+          osdsPerDevice: "3"
+        name: nvme0n1
+      name: node2
+    - devices:
+      - config:
+          encryptedDevice: "false"
+          osdsPerDevice: "3"
+        name: nvme0n1
+      name: node3
+    onlyApplyOSDPlacement: false
+    useAllDevices: false
+    useAllNodes: true
+  waitTimeoutForHealthyOSDInMinutes: 10
+---
+# Source: rook-ceph-cluster/templates/cephfilesystem.yaml
+apiVersion: ceph.rook.io/v1
+kind: CephFilesystem
+metadata:
+  name: ceph-filesystem
+spec:
+  dataPools:
+  - failureDomain: host
+    replicated:
+      size: 3
+  metadataPool:
+    replicated:
+      size: 3
+  metadataServer:
+    activeCount: 1
+    activeStandby: true
+---
+# Source: rook-ceph-cluster/templates/cephobjectstore.yaml
+apiVersion: ceph.rook.io/v1
+kind: CephObjectStore
+metadata:
+  name: ceph-objectstore
+spec:
+  dataPool:
+    erasureCoded:
+      codingChunks: 1
+      dataChunks: 2
+    failureDomain: host
+  gateway:
+    instances: 1
+    port: 80
+  healthCheck:
+    bucket:
+      interval: 60s
+  metadataPool:
+    failureDomain: host
+    replicated:
+      size: 3
+  preservePoolsOnDelete: true
