@@ -41,7 +41,7 @@ cephBlockPools:
     storageClass:
       enabled: true
       name: ceph-block-hdd
-      isDefault: false
+      isDefault: true
       allowVolumeExpansion: true
       reclaimPolicy: Delete
       parameters:
