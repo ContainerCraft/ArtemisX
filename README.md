@@ -36,15 +36,15 @@ kubectl kustomize https://github.com/containercraft/artemis/kong         | kubec
 ```
   - Optional: Add Kargo Kubevirt Hypervisor
 ```sh
-kubectl taint nodes --all --overwrite       node-role.kubernetes.io/master-
-kubectl label nodes --all --overwrite       node-role.kubernetes.io/master=''
-kubectl label nodes --all --overwrite       node-role.kubernetes.io/worker=''
-kubectl label nodes --all --overwrite       node-role.kubernetes.io/control-plane=''
+kubectl create namespace kargo --dry-run=client -oyaml             | kubectl apply -f -
+kubectl kustomize https://github.com/containercraft/artemis/kargo  | kubectl apply -f -
+```
+  - Label nodes
+```sh
 kubectl label nodes --all --overwrite       node-role.kubernetes.io/kubevirt=''
 kubectl label nodes --all --overwrite       kargo-zone.containercraft.io/all=''
 kubectl label nodes node1 node2 --overwrite kargo-zone.containercraft.io/a=''
 kubectl label nodes node2 node3 --overwrite kargo-zone.containercraft.io/b=''
 kubectl label nodes node3 node1 --overwrite kargo-zone.containercraft.io/c=''
-kubectl create namespace kargo --dry-run=client -oyaml             | kubectl apply -f -
-kubectl kustomize https://github.com/containercraft/artemis/kargo  | kubectl apply -f -
+kubectl label nodes node4       --overwrite kargo-zone.containercraft.io/d=''
 ```
