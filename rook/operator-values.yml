@@ -4,7 +4,6 @@ image:
   repository: rook/ceph
   tag: v1.7.2
   pullPolicy: IfNotPresent
-
 crds:
   enabled: false
 resources:
@@ -14,7 +13,6 @@ resources:
   requests:
     cpu: 100m
     memory: 128Mi
-
 nodeSelector: {}
 tolerations: []
 unreachableNodeTolerationSeconds: 5
