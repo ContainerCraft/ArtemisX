@@ -336,8 +336,8 @@ spec:
                           and is only valid for applications sourced from Git.
                         type: string
                       plugin:
-                        description: ConfigManagementPlugin holds config management
-                          plugin specific options
+                        description: Plugin holds config management plugin specific
+                          options
                         properties:
                           env:
                             description: Env is a list of environment variable entries
@@ -682,8 +682,7 @@ spec:
                       and is only valid for applications sourced from Git.
                     type: string
                   plugin:
-                    description: ConfigManagementPlugin holds config management plugin
-                      specific options
+                    description: Plugin holds config management plugin specific options
                     properties:
                       env:
                         description: Env is a list of environment variable entries
@@ -1038,8 +1037,8 @@ spec:
                             and is only valid for applications sourced from Git.
                           type: string
                         plugin:
-                          description: ConfigManagementPlugin holds config management
-                            plugin specific options
+                          description: Plugin holds config management plugin specific
+                            options
                           properties:
                             env:
                               description: Env is a list of environment variable entries
@@ -1410,8 +1409,8 @@ spec:
                                   from Git.
                                 type: string
                               plugin:
-                                description: ConfigManagementPlugin holds config management
-                                  plugin specific options
+                                description: Plugin holds config management plugin
+                                  specific options
                                 properties:
                                   env:
                                     description: Env is a list of environment variable
@@ -1754,8 +1753,8 @@ spec:
                               and is only valid for applications sourced from Git.
                             type: string
                           plugin:
-                            description: ConfigManagementPlugin holds config management
-                              plugin specific options
+                            description: Plugin holds config management plugin specific
+                              options
                             properties:
                               env:
                                 description: Env is a list of environment variable
@@ -2088,8 +2087,8 @@ spec:
                               and is only valid for applications sourced from Git.
                             type: string
                           plugin:
-                            description: ConfigManagementPlugin holds config management
-                              plugin specific options
+                            description: Plugin holds config management plugin specific
+                              options
                             properties:
                               env:
                                 description: Env is a list of environment variable
@@ -9692,7 +9691,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: quay.io/argoproj/argocd:v2.4.14
+        image: quay.io/argoproj/argocd:v2.4.15
         imagePullPolicy: Always
         name: argocd-applicationset-controller
         ports:
@@ -9764,7 +9763,7 @@ spec:
       - command:
         - /shared/argocd-dex
         - rundex
-        image: ghcr.io/dexidp/dex:v2.35.1-distroless
+        image: ghcr.io/dexidp/dex:v2.35.3-distroless
         imagePullPolicy: Always
         name: dex
         ports:
@@ -9789,7 +9788,7 @@ spec:
         - -n
         - /usr/local/bin/argocd
         - /shared/argocd-dex
-        image: quay.io/argoproj/argocd:v2.4.14
+        image: quay.io/argoproj/argocd:v2.4.15
         imagePullPolicy: Always
         name: copyutil
         securityContext:
@@ -9829,7 +9828,7 @@ spec:
       containers:
       - command:
         - argocd-notifications
-        image: quay.io/argoproj/argocd:v2.4.14
+        image: quay.io/argoproj/argocd:v2.4.15
         imagePullPolicy: Always
         livenessProbe:
           tcpSocket:
@@ -10054,7 +10053,7 @@ spec:
           value: /helm-working-dir
         - name: HELM_DATA_HOME
           value: /helm-working-dir
-        image: quay.io/argoproj/argocd:v2.4.14
+        image: quay.io/argoproj/argocd:v2.4.15
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
@@ -10103,7 +10102,7 @@ spec:
         - -n
         - /usr/local/bin/argocd
         - /var/run/argocd/argocd-cmp-server
-        image: quay.io/argoproj/argocd:v2.4.14
+        image: quay.io/argoproj/argocd:v2.4.15
         name: copyutil
         securityContext:
           allowPrivilegeEscalation: false
@@ -10346,7 +10345,7 @@ spec:
               key: otlp.address
               name: argocd-cmd-params-cm
               optional: true
-        image: quay.io/argoproj/argocd:v2.4.14
+        image: quay.io/argoproj/argocd:v2.4.15
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
@@ -10548,7 +10547,7 @@ spec:
               key: otlp.address
               name: argocd-cmd-params-cm
               optional: true
-        image: quay.io/argoproj/argocd:v2.4.14
+        image: quay.io/argoproj/argocd:v2.4.15
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
